@@ -12,4 +12,5 @@ if __name__ == "__main__":
     twitter = TwitterApi()
     tweet = twitter.get_id(475)
     print(tweet)
-
+    unhcr = Unhcr()
+    unhcr.exploration()
