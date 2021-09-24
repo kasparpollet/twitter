@@ -1,8 +1,15 @@
 import pandas as pd
+import os
+from dotenv import load_dotenv
+
 from twitter import TwitterApi
 from database import DataBase
-from unhcr import TwitterApi
+from unhcr import Unhcr
 
 if __name__ == "__main__":
     # RUN CODE HERE
-    pass
+    load_dotenv()
+    twitter = TwitterApi()
+    tweet = twitter.get_id(475)
+    print(tweet)
+
