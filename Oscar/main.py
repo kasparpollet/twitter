@@ -10,7 +10,7 @@ if __name__ == "__main__":
     # RUN CODE HERE
     load_dotenv()
     twitter = TwitterApi()
-    tweet = twitter.get_id(475)
-    hashtag = twitter.get_hashtag()
-    print(hashtag)
+    tweet = twitter.get_id(457)
+    #hashtag = twitter.get_hashtag()
+    print(twitter.get_hashtag())
 

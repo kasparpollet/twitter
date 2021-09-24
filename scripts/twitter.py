@@ -7,7 +7,7 @@ class TwitterApi:
         self.base_url = os.getenv('TWITTER_API_URL')
         self.token = os.getenv('TWITTER_BEARER_TOKEN')
 
-    def get_heshtag(self, hashtag):
+    def get_hashtag(self):
         pass
 
     def get_id(self, id):
