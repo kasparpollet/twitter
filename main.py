@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 from dotenv import load_dotenv
 
 from scripts.twitter import TwitterApi
@@ -17,5 +16,8 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
 
-    reviews = DataBase().get_unhcr()
-    print(reviews)
+    taliban = twitter.get_hashtag('Taliban')
+    print(taliban)
+
+    # reviews = DataBase().get_unhcr()
+    # print(reviews)
