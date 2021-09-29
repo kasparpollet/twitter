@@ -91,3 +91,5 @@ class Unhcr:
     
         plt.title("Refugees times series by country (2006-2020) without Pakistan, Iran and Germany")
         ax.legend(frameon=False)
+
+        return df

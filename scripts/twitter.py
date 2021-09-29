@@ -1,13 +1,13 @@
 import requests
 import os
-import tweepy
+# import tweepy
 
 
 class TwitterApi:
     #https://api.twitter.com/2/tweets/search/recent?query=%23afghanistan&tweet.fields=created_at,text,lang,possibly_sensitive,in_reply_to_user_id
     def __init__(self):
         self.base_url = os.getenv('https://api.twitter.com/2/tweets/')
-        self.token = os.getenv('AAAAAAAAAAAAAAAAAAAAAI%2FNTwEAAAAAoIzTzRatKfoccjMZOQA6sZPlMXo%3D0QoXq4OjPQqgyXNLCg0F1NgRXOTg3goyeROEtm7RnhCNp7NCGD')
+        self.token = os.getenv('TWITTER_BEARER_TOKEN')
 
     def get_hashtag(self):
         hashtags = []
@@ -15,8 +15,7 @@ class TwitterApi:
             'Authorization': f'Bearer {self.token}',
         }
         api = requests.get(self.base_url + "search/recent?query=%40Taliban", headers=headers).text
-        df = 
-        return
+        return api
 
     def get_id(self, id):
         headers = {

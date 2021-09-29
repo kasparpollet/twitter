@@ -1,17 +1,14 @@
 import pandas as pd
+import os
 from sqlalchemy import create_engine
 
 class DataBase:
     
     def __init__(self):
-        self.database_url = ''
-        self.engine = self.get_engine()
+        self.engine = create_engine(os.getenv('DATABASE_URL'))
 
-    def get_reviews(self):
-        return pd.read_sql("SELECT * FROM ???", con=self.engine)
+    def get_unhcr(self):
+        return pd.read_sql("SELECT * FROM unhcr", con=self.engine)
 
-    def upload_data(self, df, name):
-        df.to_sql(name=name,con=self.engine,if_exists='fail',index=False,chunksize=1000) 
-
-    def create_enigne(self):
-        return create_engine(self.database_url)
+    def upload_data(self, df, name, error='fail'):
+        df.to_sql(name=name,con=self.engine,if_exists=error,index=False,chunksize=1000) 
