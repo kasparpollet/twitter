@@ -8,6 +8,7 @@ import csv
 import time
 
 
+
 class TwitterApi:
     
     def __init__(self):
@@ -15,6 +16,18 @@ class TwitterApi:
         self.token = os.getenv('TWITTER_BEARER_TOKEN')
 
     def get_hashtag(self):
+        search_words = ['#afghanistan -filter:retweets', '#AfghanistanRefugees -filter:retweets',
+                        '#AfghanistanCrisis -filter:retweets', '#PakistanIsTaliban -filter:retweets',
+                        '#TalibanTerror -filter:retweets', '#UNHCR -filter:retweets',
+                        '#humanitarianAssist -filter:retweets',
+                        '#AfganistanWomen -filter:retweets', '#SanctionPakistan -filter:retweets',
+                        '#unitednations -filter:retweets', '#AfghanistanBurning -filter:retweets',
+                        '#Panjshir -filter:retweets', '#kaboel -filter:retweets', '#Humanrights -filter:retweets',
+                        '#NoToTaliban -filter:retweets',
+                        '#AfghanistanDisaster -filter:retweets',
+                        '#afghanrefugees -filter:retweets', '#TalibanTakeover -filter:retweets',
+                        '#AfghanRefugees -filter:retweets']
+        
         # Keys and access for Twitter
         consumer_key = '0JaPiWrKpeuN5XKrJ62QjhnOZ'
         consumer_secret = '6CfnfH8y7PQUvz1eDKTZAjOf6WCgFYFbhriMQtecBROHyOVMFr'

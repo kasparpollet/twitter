@@ -4,7 +4,7 @@ import tweepy
 import pandas as pd
 
 class TwitterApi:
-    #https://api.twitter.com/2/tweets/search/recent?query=%23afghanistan&tweet.fields=created_at,text,lang,possibly_sensitive,in_reply_to_user_id
+    
     def __init__(self):
         self.base_url = os.getenv('TWITTER_API_URL')
         self.api = self.__setup()
