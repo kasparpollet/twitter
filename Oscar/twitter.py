@@ -27,7 +27,7 @@ class TwitterApi:
                         '#AfghanistanDisaster -filter:retweets',
                         '#afghanrefugees -filter:retweets', '#TalibanTakeover -filter:retweets',
                         '#AfghanRefugees -filter:retweets']
-        
+
         # Keys and access for Twitter
         consumer_key = '0JaPiWrKpeuN5XKrJ62QjhnOZ'
         consumer_secret = '6CfnfH8y7PQUvz1eDKTZAjOf6WCgFYFbhriMQtecBROHyOVMFr'

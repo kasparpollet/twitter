@@ -10,7 +10,7 @@ class TwitterApi:
         self.api = self.__setup()
 
     def __setup(self):
-        '''SEting up the twitter api'''
+        '''Seting up the twitter api'''
         consumer_key = os.getenv('TWITTER_KEY')
         consumer_secret = os.getenv('TWITTER_SECRET_SECRET_KEY')
         access_token = os.getenv('TWITTER_ACCESS_TOKEN')
@@ -21,10 +21,17 @@ class TwitterApi:
         return tweepy.API(auth)
 
     def get_hashtags(self, hashtags):
+
+        #Max Tweets the function retrieves
         MAX_TWEETS = 2
+
+        #List where the tweet information is stored
         twlist = []
 
         try:
+
+            #Loops through every hashtag, for every hashtag there is an API call done to retrieve the tweets from that
+            #specific hashtag
             for hashtag in hashtags:
                 print('getting:', hashtag)
                 tweets = tweepy.Cursor(self.api.search_tweets,
@@ -37,6 +44,7 @@ class TwitterApi:
             pass
         
         print('finished')
+        #Dataframe with tweetsinformation of all the hashtags are returned
         return pd.DataFrame(data=twlist, columns=['tweet'])        
 
     def get_id(self, id):
