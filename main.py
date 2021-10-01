@@ -21,7 +21,8 @@ if __name__ == "__main__":
     twitter, unhcr, db = __init__()
 
     tweets_df = twitter.get_hashtags(get_hashtags_from_file())
+    print(tweets_df['text'][3])
 
-    db.upload_data(tweets_df, 'tweets', 'replace')
+    #db.upload_data(tweets_df, 'tweets', 'replace')
 
-    print(db.get_tweets()['text'].head(2))
+    #print(db.get_tweets()['text'].head(2))
