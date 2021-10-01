@@ -2,52 +2,51 @@ import requests
 import os
 import tweepy
 import pandas as pd
-import json
-import datetime
-import csv
-import time
-
 
 
 class TwitterApi:
-    
+
     def __init__(self):
         self.base_url = os.getenv('TWITTER_API_URL')
-        self.token = os.getenv('TWITTER_BEARER_TOKEN')
+        self.api = self.__setup()
 
-    def get_hashtag(self):
-        search_words = ['#afghanistan -filter:retweets', '#AfghanistanRefugees -filter:retweets',
-                        '#AfghanistanCrisis -filter:retweets', '#PakistanIsTaliban -filter:retweets',
-                        '#TalibanTerror -filter:retweets', '#UNHCR -filter:retweets',
-                        '#humanitarianAssist -filter:retweets',
-                        '#AfganistanWomen -filter:retweets', '#SanctionPakistan -filter:retweets',
-                        '#unitednations -filter:retweets', '#AfghanistanBurning -filter:retweets',
-                        '#Panjshir -filter:retweets', '#kaboel -filter:retweets', '#Humanrights -filter:retweets',
-                        '#NoToTaliban -filter:retweets',
-                        '#AfghanistanDisaster -filter:retweets',
-                        '#afghanrefugees -filter:retweets', '#TalibanTakeover -filter:retweets',
-                        '#AfghanRefugees -filter:retweets']
-
-        # Keys and access for Twitter
-        consumer_key = '0JaPiWrKpeuN5XKrJ62QjhnOZ'
-        consumer_secret = '6CfnfH8y7PQUvz1eDKTZAjOf6WCgFYFbhriMQtecBROHyOVMFr'
-        access_token = '1438084578984476677-xH18IauzOG0abRlBDIu2ilPBxSV0y9'
-        access_token_secret = '7oasPw5UUlsIOArbDHGvoZASefAs5wF4LI5wN8Lur9Iml'
+    def __setup(self):
+        '''Seting up the twitter api'''
+        consumer_key = os.getenv('TWITTER_KEY')
+        consumer_secret = os.getenv('TWITTER_SECRET_SECRET_KEY')
+        access_token = os.getenv('TWITTER_ACCESS_TOKEN')
+        access_token_secret = os.getenv('TWITTER_ACCESS_TOKEN_SECRET')
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_token, access_token_secret)
-        datesince = '2020-01-01'
-        MAX_TWEETS = 10
-
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-        api = tweepy.API(auth)
-        tweets = tweepy.Cursor(api.search_tweets, q='#Taliban', lang='en',
-                               since=datesince).items(MAX_TWEETS)
-        data = pd.DataFrame(data=[tweet for tweet in tweets], columns=['Tweets'])
-        print(data)
-        data.to_csv('tweets.csv')
+        return tweepy.API(auth)
 
+    def get_hashtags(self, hashtags):
 
-        return
+        # Max Tweets the function retrieves
+        MAX_TWEETS = 2
+
+        # List where the tweet information is stored
+        twlist = []
+
+        try:
+
+            # Loops through every hashtag, for every hashtag there is an API call done to retrieve the tweets from that
+            # specific hashtag
+            for hashtag in hashtags:
+                print('getting:', hashtag)
+                tweets = tweepy.Cursor(self.api.search_tweets,
+                                       q=f'{hashtag} -filter:retweets',
+                                       lang="en").items(MAX_TWEETS)
+                # tweets_no_urls = [remove_url(tweet.text) for tweet in tweets]
+                twlistap = [tweet.text for tweet in tweets]
+                twlist.extend(twlistap)
+        except:
+            pass
+
+        print('finished')
+        # Dataframe with tweetsinformation of all the hashtags are returned
+        return pd.DataFrame(data=twlist, columns=['tweet'])
 
     def get_id(self, id):
         headers = {
