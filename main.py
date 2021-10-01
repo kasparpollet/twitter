@@ -23,3 +23,5 @@ if __name__ == "__main__":
     tweets_df = twitter.get_hashtags(get_hashtags_from_file())
 
     db.upload_data(tweets_df, 'tweets', 'replace')
+
+    print(db.get_tweets()['text'].head(2))

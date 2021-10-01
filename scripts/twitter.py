@@ -24,22 +24,21 @@ class TwitterApi:
 
         #Max Tweets the function retrieves
         MAX_TWEETS = 2
-        twlist = [[]]
+        twlist = []
 
         try:
-
             #Loops through every hashtag, for every hashtag there is an API call done to retrieve the tweets from that
             #specific hashtag
             for hashtag in hashtags:
                 print('getting:', hashtag)
                 tweets = tweepy.Cursor(self.api.search_tweets,
                                 q=f'{hashtag} -filter:retweets',
-                                lang="en").items(MAX_TWEETS)
+                                lang="en", tweet_mode='extended').items(MAX_TWEETS)
                 # tweets_no_urls = [remove_url(tweet.text) for tweet in tweets]
-                twlistap = [[tweet.id, tweet.text, tweet.created_at, tweet.user.id, tweet.user.location] for tweet in tweets]
+                twlistap = [[tweet.id, tweet.full_text, tweet.created_at, tweet.user.id, tweet.user.location] for tweet in tweets]
                 twlist.extend(twlistap)
-        except:
-            pass
+        except Exception as e:
+            print(e)
         
         print('finished')
 
