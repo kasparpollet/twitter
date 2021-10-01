@@ -1,6 +1,7 @@
 import pandas as pd
 import os
 from sqlalchemy import create_engine
+import pymysql
 
 class DataBase:
     
@@ -12,3 +13,4 @@ class DataBase:
 
     def upload_data(self, df, name, error='fail'):
         df.to_sql(name=name,con=self.engine,if_exists=error,index=False,chunksize=1000) 
+        

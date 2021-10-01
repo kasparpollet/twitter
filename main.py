@@ -4,6 +4,10 @@ from scripts.twitter import TwitterApi
 from scripts.database import DataBase
 from scripts.unhcr import Unhcr
 
+def get_hashtags_from_file():
+    with open('./files/hashtags.txt') as f:
+        content = [line.split('\n')[0] for line in f.readlines()]
+    return content
 
 def __init__():
     load_dotenv()
@@ -16,8 +20,6 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
 
-    taliban = twitter.get_hashtag('Taliban')
-    print(taliban)
+    tweets_df = twitter.get_hashtags(get_hashtags_from_file())
 
-    # reviews = DataBase().get_unhcr()
-    # print(reviews)
+    db.upload_data(tweets_df, 'tweets', 'replace')

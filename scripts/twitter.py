@@ -20,14 +20,24 @@ class TwitterApi:
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         return tweepy.API(auth)
 
-    def get_hashtag(self, hashtag):
-        datesince = '2020-01-01'
-        MAX_TWEETS = 10
+    def get_hashtags(self, hashtags):
+        MAX_TWEETS = 2
+        twlist = []
 
-        tweets = tweepy.Cursor(self.api.search_tweets, q=f'#{hashtag}', lang='en',
-                               since=datesince).items(MAX_TWEETS)
-        data = pd.DataFrame(data=[tweet for tweet in tweets], columns=['Tweets'])
-        return data
+        try:
+            for hashtag in hashtags:
+                print('getting:', hashtag)
+                tweets = tweepy.Cursor(self.api.search_tweets,
+                                q=f'{hashtag} -filter:retweets',
+                                lang="en").items(MAX_TWEETS)
+                # tweets_no_urls = [remove_url(tweet.text) for tweet in tweets]
+                twlistap = [tweet.text for tweet in tweets]
+                twlist.extend(twlistap)
+        except:
+            pass
+        
+        print('finished')
+        return pd.DataFrame(data=twlist, columns=['tweet'])        
 
     def get_id(self, id):
         headers = {
