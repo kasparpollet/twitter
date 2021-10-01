@@ -9,6 +9,10 @@ def get_hashtags_from_file():
         content = [line.split('\n')[0] for line in f.readlines()]
     return content
 
+def remove_emojis(text):
+    return text.encode('ascii', 'ignore').decode('ascii')
+
+
 def __init__():
     load_dotenv()
     twitter = TwitterApi()
@@ -20,8 +24,7 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
 
-    tweets_df = twitter.get_hashtags(get_hashtags_from_file())
-
-    db.upload_data(tweets_df, 'tweets', 'replace')
+    # tweets_df = twitter.get_hashtags(get_hashtags_from_file())
+    # db.upload_data(tweets_df, 'tweets', 'replace')
 
     print(db.get_tweets()['text'].head(2))
