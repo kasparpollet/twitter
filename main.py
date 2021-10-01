@@ -9,8 +9,20 @@ def get_hashtags_from_file():
         content = [line.split('\n')[0] for line in f.readlines()]
     return content
 
-def remove_emojis(text):
-    return text.encode('ascii', 'ignore').decode('ascii')
+
+def clean_text(text):
+    whitelist = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    cleanText = text.replace("<br>", " ")
+    cleanText = cleanText.replace("\n", " ")
+    cleanText = cleanText.encode('ascii', 'ignore').decode('ascii')
+    return ''.join(filter(whitelist.__contains__, cleanText))
+
+
+def remove_stopwords(text):
+    with open('./files/stopwords.txt') as f:
+        for i in f.items():
+            text = text.replace(i, '')
+    return text
 
 
 def __init__():
