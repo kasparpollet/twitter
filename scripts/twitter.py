@@ -22,7 +22,7 @@ class TwitterApi:
 
     def get_hashtags(self, hashtags):
         MAX_TWEETS = 2
-        twlist = []
+        twlist = [[]]
 
         try:
             for hashtag in hashtags:
@@ -31,13 +31,13 @@ class TwitterApi:
                                 q=f'{hashtag} -filter:retweets',
                                 lang="en").items(MAX_TWEETS)
                 # tweets_no_urls = [remove_url(tweet.text) for tweet in tweets]
-                twlistap = [tweet.text for tweet in tweets]
+                twlistap = [[tweet.id, tweet.text, tweet.created_at, tweet.user.id, tweet.user.location] for tweet in tweets]
                 twlist.extend(twlistap)
         except:
             pass
         
         print('finished')
-        return pd.DataFrame(data=twlist, columns=['tweet'])        
+        return pd.DataFrame(data=twlist, columns=['id', 'text', 'created_at', 'user_id', 'user_location'])        
 
     def get_id(self, id):
         headers = {
