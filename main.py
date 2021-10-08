@@ -1,15 +1,9 @@
-from os import remove
 from dotenv import load_dotenv
 
 from scripts.twitter import TwitterApi
 from scripts.database import DataBase
 from scripts.unhcr import Unhcr
 from scripts.clean import Clean
-
-#Natural language processing tool-kit
-import nltk           
-from nltk.corpus import stopwords
-from nltk.stem import PorterStemmer
 
 #Wordcloud imports
 from wordcloud import WordCloud
@@ -49,13 +43,12 @@ def __init__():
 if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
-
-    tweet = db.get_tweets()
-    print(tweet.info())
-
-#    test = twitter.get_hashtags(get_hashtags_from_file(), 1)
-#    print(test)
-    cleaner = Clean(tweet)
-    matrix = cleaner.tokenize()
+    tweets = db.get_tweets()
+    cleaned_tweets = Clean(tweets)
+    
+    matrix = cleaned_tweets.matrix
     print(matrix)
+    # cleaned_tweets.display_wordcloud()
+
+    # test = twitter.get_hashtags(get_hashtags_from_file(), 1)
     # display_wordcloud(tweet)
