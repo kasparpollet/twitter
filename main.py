@@ -42,6 +42,14 @@ def remove_stopwords(tweet):
         tweet.at[index, 'text'] = words
 
 def display_wordcloud(df):
+    my_cloud1 = WordCloud(background_color='black').generate(' '.join(df['text']))
+    # Display the generated wordcloud image
+    plt.imshow(my_cloud1, interpolation='bilinear') 
+    plt.axis("off")
+
+    # Don't forget to show the final image
+    plt.show()
+    
     unuseful_words = [word.replace('#', '').lower() for word in get_hashtags_from_file()]
     unuseful_words += ['https', 't', 'afghan', 'afghanistan', 'new', 'amp', 's']
     my_stopwords = ENGLISH_STOP_WORDS.union(unuseful_words)
@@ -71,20 +79,20 @@ def tokenizer(tweets):
     print('Length of vectorizer 1: ', len(vect1.get_feature_names()))
     print('Length of vectorizer 2: ', len(vect2.get_feature_names()))
 
-    # Create a list of lists, containing the tokens from list_tweets
-    tokens = [word_tokenize(item) for item in tweets_list]
+    # # Create a list of lists, containing the tokens from list_tweets
+    # tokens = [word_tokenize(item) for item in tweets_list]
 
-    # Remove characters and digits , i.e. retain only letters
-    letters = [[word for word in item if word.isalpha()] for item in tokens]
-    # Remove characters, i.e. retain only letters and digits
-    let_digits = [[word for word in item if word.isalnum()] for item in tokens]
-    # Remove letters and characters, retain only digits
-    digits = [[word for word in item if word.isdigit()] for item in tokens]
+    # # Remove characters and digits , i.e. retain only letters
+    # letters = [[word for word in item if word.isalpha()] for item in tokens]
+    # # Remove characters, i.e. retain only letters and digits
+    # let_digits = [[word for word in item if word.isalnum()] for item in tokens]
+    # # Remove letters and characters, retain only digits
+    # digits = [[word for word in item if word.isdigit()] for item in tokens]
 
-    # Print the last item in each list
-    print('Last item in alphabetic list: ', letters[2])
-    print('Last item in list of alphanumerics: ', let_digits[2])
-    print('Last item in the list of digits: ', digits[2])
+    # # Print the last item in each list
+    # print('Last item in alphabetic list: ', letters[2])
+    # print('Last item in list of alphanumerics: ', let_digits[2])
+    # print('Last item in the list of digits: ', digits[2])
 def __init__():
     load_dotenv()
     twitter = TwitterApi()
