@@ -14,6 +14,7 @@ from nltk.stem import PorterStemmer
 from wordcloud import WordCloud
 from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 import matplotlib.pyplot as plt
+import nltk.word_tokenize
 
 def get_hashtags_from_file():
     with open('./files/hashtags.txt') as f:
@@ -73,6 +74,20 @@ def tokenizer(tweets):
     print('Length of vectorizer 1: ', len(vect1.get_feature_names()))
     print('Length of vectorizer 2: ', len(vect2.get_feature_names()))
 
+    # Create a list of lists, containing the tokens from list_tweets
+    tokens = [word_tokenize(item) for item in tweets_list]
+
+    # Remove characters and digits , i.e. retain only letters
+    letters = [[word for word in item if word.isalpha()] for item in tokens]
+    # Remove characters, i.e. retain only letters and digits
+    let_digits = [[word for word in item if word.isalnum()] for item in tokens]
+    # Remove letters and characters, retain only digits
+    digits = [[word for word in item if word.isdigit()] for item in tokens]
+
+    # Print the last item in each list
+    print('Last item in alphabetic list: ', letters[2])
+    print('Last item in list of alphanumerics: ', let_digits[2])
+    print('Last item in the list of digits: ', digits[2])
 def __init__():
     load_dotenv()
     twitter = TwitterApi()
