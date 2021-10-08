@@ -15,6 +15,12 @@ class DataBase:
     def get_tweets(self):
         return pd.read_sql_query("CALL allDataTweets()", con=self.get_engine)
 
+    def get_new_id(self):
+        return pd.read_sql_query("CALL mostRecent()", con=self.get_engine)
+
+    def get_old_id(self):
+        return pd.read_sql_query("CALL mostOld()", con=self.get_engine)
+
     def upload_data(self, df, name, error='fail'):
         try:
             df.to_sql(name=name,con=self.put_engine,if_exists=error,index=False,chunksize=1000) 
