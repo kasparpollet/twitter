@@ -50,12 +50,12 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
 
-    # tweets_df = twitter.get_hashtags(get_hashtags_from_file())
+    tweets_df = twitter.get_hashtags(get_hashtags_from_file(), 1)
     # db.upload_data(tweets_df, 'tweets', 'replace')
-
+    print(tweets_df)
     #print(db.get_tweets()['text'].head(2))
-    newestId = db.get_new_id()
-    oldestId = db.get_old_id()
-    tweet = db.get_tweets()
-    #print(tweet)
-    print(remove_stopwords(tweet))
+    # newestId = db.get_new_id()
+    # oldestId = db.get_old_id()
+    # tweet = db.get_tweets()
+    # #print(tweet)
+    # print(remove_stopwords(tweet))
