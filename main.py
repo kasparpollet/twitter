@@ -10,6 +10,11 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 
+#Wordcloud imports
+from wordcloud import WordCloud
+from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
+import matplotlib.pyplot as plt
+
 def get_hashtags_from_file():
     with open('./files/hashtags.txt') as f:
         content = [line.split('\n')[0] for line in f.readlines()]
@@ -38,6 +43,35 @@ def remove_stopwords(tweet):
         print(tweet['text'])
     return temp
 
+def display_wordcloud(df):
+    unuseful_words = [word.replace('#', '').lower() for word in get_hashtags_from_file()]
+    unuseful_words += ['https', 't', 'afghan', 'afghanistan', 'new', 'amp', 's']
+    my_stopwords = ENGLISH_STOP_WORDS.union(unuseful_words)
+    vect = CountVectorizer(lowercase = True, stop_words=my_stopwords)
+    vect.fit(df.text)
+    X = vect.transform(df.text)
+    # Create and generate a word cloud image 
+    my_cloud = WordCloud(background_color='white',stopwords=my_stopwords).generate(' '.join(df['text']))
+
+    # Display the generated wordcloud image
+    plt.imshow(my_cloud, interpolation='bilinear') 
+    plt.axis("off")
+
+    # Don't forget to show the final image
+    plt.show()
+
+def tokenizer(tweets):
+    # Build the first vectorizer
+    vect1 = CountVectorizer().fit(tweets.text)
+    vect1.transform(tweets.text)
+
+    # Build the second vectorizer
+    vect2 = CountVectorizer(token_pattern=r'\b[^\d\W][^\d\W]').fit(tweets.text)
+    vect2.transform(tweets.text)
+
+    # Print out the length of each vectorizer
+    print('Length of vectorizer 1: ', len(vect1.get_feature_names()))
+    print('Length of vectorizer 2: ', len(vect2.get_feature_names()))
 
 def __init__():
     load_dotenv()
@@ -57,5 +91,7 @@ if __name__ == "__main__":
     newestId = db.get_new_id()
     oldestId = db.get_old_id()
     tweet = db.get_tweets()
+    print(tweet.info())
     #print(tweet)
-    print(remove_stopwords(tweet))
+    #print(remove_stopwords(tweet))
+    display_wordcloud(tweet)
