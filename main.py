@@ -1,5 +1,6 @@
 from os import remove
 from dotenv import load_dotenv
+import re
 
 from scripts.twitter import TwitterApi
 from scripts.database import DataBase
@@ -24,6 +25,7 @@ def get_hashtags_from_file():
 
 def clean_text(text):
     whitelist = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+    cleanText = re.sub(r'^https?:\/\/.[\r\n]', '', text, flags=re.MULTILINE)
     cleanText = text.replace("<br>", " ")
     cleanText = cleanText.replace("\n", " ")
     cleanText = cleanText.encode('ascii', 'ignore').decode('ascii')
@@ -34,15 +36,10 @@ def remove_stopwords(tweet):
     # Create stopword list
     nltk.download("stopwords")
     stop = set(stopwords.words('english'))
-    temp =[]
     snow = nltk.stem.SnowballStemmer('english')
     for index, row in tweet.iterrows():
-        print(tweet['text'])
         words = [snow.stem(word) for word in row['text'].split() if word not in stop]
-        temp.append(words)
         tweet.at[index, 'text'] = words
-        print(tweet['text'])
-    return temp
 
 def display_wordcloud(df):
     unuseful_words = [word.replace('#', '').lower() for word in get_hashtags_from_file()]
