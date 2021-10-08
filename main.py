@@ -43,7 +43,7 @@ if __name__ == "__main__":
 
     matrix = cleaned_tweets.matrix
     print(matrix)
-    cleaned_tweets.display_wordcloud()
+    # cleaned_tweets.display_wordcloud()
 
     # test = twitter.get_hashtags(get_hashtags_from_file(), 1)
     # display_wordcloud_no_stopwords(tweets)

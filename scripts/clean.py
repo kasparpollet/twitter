@@ -26,7 +26,6 @@ class Clean:
 
     def __clean_text(self, text):
         whitelist = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-        clean_text = re.sub(r'^https?:\/\/.[\r\n]', '', text, flags=re.MULTILINE)
         clean_text = text.replace("<br>", " ")
         clean_text = clean_text.replace("\n", " ")
         clean_text = clean_text.encode('ascii', 'ignore').decode('ascii')
@@ -63,9 +62,7 @@ class Clean:
         unuseful_words = [word.replace('#', '').lower() for word in get_hashtags_from_file()]
         unuseful_words += ['https', 't', 'afghan', 'afghanistan', 'new', 'amp', 's']
         my_stopwords = ENGLISH_STOP_WORDS.union(unuseful_words)
-        vect = CountVectorizer(lowercase = True, stop_words=my_stopwords)
-        vect.fit(self.df.text)
-        X = vect.transform(self.df.text)
+
         # Create and generate a word cloud image 
         my_cloud = WordCloud(background_color='white',stopwords=my_stopwords).generate(' '.join(self.df['text']))
 
