@@ -15,7 +15,7 @@ from nltk.stem import PorterStemmer
 from wordcloud import WordCloud
 from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 import matplotlib.pyplot as plt
-import nltk.word_tokenize
+from nltk import word_tokenize
 
 def get_hashtags_from_file():
     with open('./files/hashtags.txt') as f:
