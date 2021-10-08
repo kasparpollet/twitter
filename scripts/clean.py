@@ -16,47 +16,45 @@ import matplotlib.pyplot as plt
 
 class Clean:
     def __init__(self, df):
-        self.df = df
-        self.matrix = self.tokenize()
+        self.df = self.__clean(df)
+        # self.matrix = self.tokenize()
 
-    def clean(self):
-        self.df['text'] = self.df['text'].apply(lambda x: self.clean_text(str(x)))
-        print(self.df['text'][1])
+    def __clean(self, df):
+        df['text'] = df['text'].apply(lambda x: self.clean_text(str(x)))
+        return df
 
     def clean_text(self, text):
         whitelist = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+        cleanText = re.sub(r'^https?:\/\/.[\r\n]', '', text, flags=re.MULTILINE)
         cleanText = text.replace("<br>", " ")
         cleanText = cleanText.replace("\n", " ")
         cleanText = cleanText.encode('ascii', 'ignore').decode('ascii')
-        return ''.join(filter(whitelist.__contains__, text))
+        cleanText = ''.join(i + ' ' for i in cleanText.split() if not i.startswith('http'))
+        return ''.join(filter(whitelist.__contains__, cleanText))
 
     def remove_stopwords(self, tweet):
         # Create stopword list
         nltk.download("stopwords")
         stop = set(stopwords.words('english'))
-        temp =[]
         snow = nltk.stem.SnowballStemmer('english')
         for index, row in tweet.iterrows():
-            print(tweet['text'])
             words = [snow.stem(word) for word in row['text'].split() if word not in stop]
-            temp.append(words)
             tweet.at[index, 'text'] = words
-            print(tweet['text'])
-        return temp
 
     def tokenize(self):
         vec = CountVectorizer(lowercase=True, stop_words='english')
-        wordcount = vec.fit_transform(self.df['text'].apply(lambda x: self.clean_text(str(x))).tolist())
-        tokens = vec.get_feature_names()
-        print(tokens)
+        wordcount = vec.fit_transform(self.df['text'].tolist())
+        tokens = vec.get_feature_names_out()
+        print(vec.get_feature_names())
         matrix = self.dtm(wordcount, tokens)
         return matrix
 
     def dtm(self, wm, feat_names):
         # create an index for each row
         doc_names = ['Doc{:d}'.format(idx) for idx, _ in enumerate(wm)]
-        self.df = pd.DataFrame(data=wm.toarray(), index=doc_names,
+        matrix = pd.DataFrame(data=wm.toarray(), index=doc_names,
                         columns=feat_names)
+        return matrix
 
     def display_wordcloud(self):
         unuseful_words = [word.replace('#', '').lower() for word in get_hashtags_from_file()]
