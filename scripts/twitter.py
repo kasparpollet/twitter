@@ -1,7 +1,13 @@
+from numpy import MachAr
 import requests
 import os
 import tweepy
 import pandas as pd
+import time
+import datetime
+
+import urllib.request, urllib.parse, urllib.error,urllib.request,urllib.error,urllib.parse,json,re,datetime,sys,http.cookiejar
+from pyquery import PyQuery
 
 class TwitterApi:
     
@@ -20,10 +26,10 @@ class TwitterApi:
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
         return tweepy.API(auth)
 
-    def get_hashtags(self, hashtags):
+    def get_hashtags(self, hashtags, id):
 
         #Max Tweets the function retrieves
-        MAX_TWEETS = 2
+        MAX_TWEETS = 10
         twlist = []
 
         try:
@@ -31,15 +37,20 @@ class TwitterApi:
             #specific hashtag
             for hashtag in hashtags:
                 print('getting:', hashtag)
-                tweets = tweepy.Cursor(self.api.search_tweets,
-                                q=f'{hashtag} -filter:retweets',
-                                lang="en", tweet_mode='extended').items(MAX_TWEETS)
+                # tweets = tweepy.Cursor(self.api.search_tweets,
+                #                 q=f'{hashtag} -filter:retweets', max_id=id, label='Tweets',
+                #                 lang="en", tweet_mode='extended').items(MAX_TWEETS)
+                tweets = tweepy.Cursor(self.api.search_full_archive,
+                                query=f'{hashtag}',# toDate=id, 
+                                maxResults=MAX_TWEETS, label='Tweets',
+                                ).items()
                 # tweets_no_urls = [remove_url(tweet.text) for tweet in tweets]
-                twlistap = [[tweet.id, tweet.full_text, tweet.created_at, tweet.user.id, tweet.user.location] for tweet in tweets]
+                twlistap = [[tweet.id, tweet.text, tweet.created_at, tweet.user.id, tweet.user.location] for tweet in tweets]
                 twlist.extend(twlistap)
         except Exception as e:
             print(e)
         
+        print(twlist)
         print('finished')
 
         return pd.DataFrame(data=twlist, columns=['id', 'text', 'created_at', 'user_id', 'user_location'])        
