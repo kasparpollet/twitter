@@ -15,15 +15,9 @@ def get_hashtags_from_file():
         content = [line.split('\n')[0] for line in f.readlines()]
     return content
 
-def display_wordcloud(df):
-    unuseful_words = [word.replace('#', '').lower() for word in get_hashtags_from_file()]
-    unuseful_words += ['https', 't', 'afghan', 'afghanistan', 'new', 'amp', 's']
-    my_stopwords = ENGLISH_STOP_WORDS.union(unuseful_words)
-    vect = CountVectorizer(lowercase = True, stop_words=my_stopwords)
-    vect.fit(df.text)
-    X = vect.transform(df.text)
+def display_wordcloud_no_stopwords(df):
     # Create and generate a word cloud image 
-    my_cloud = WordCloud(background_color='white',stopwords=my_stopwords).generate(' '.join(df['text']))
+    my_cloud = WordCloud(background_color='white').generate(' '.join(df['text']))
 
     # Display the generated wordcloud image
     plt.imshow(my_cloud, interpolation='bilinear') 
@@ -37,18 +31,19 @@ def __init__():
     load_dotenv()
     twitter = TwitterApi()
     unhcr = Unhcr()
-    db = DataBase()
+    db = DataBase('newTweets')
     return twitter, unhcr, db
 
 if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
     tweets = db.get_tweets()
+    print(tweets)
     cleaned_tweets = Clean(tweets)
-    
+
     matrix = cleaned_tweets.matrix
     print(matrix)
-    # cleaned_tweets.display_wordcloud()
+    cleaned_tweets.display_wordcloud()
 
     # test = twitter.get_hashtags(get_hashtags_from_file(), 1)
-    # display_wordcloud(tweet)
+    # display_wordcloud_no_stopwords(tweets)
