@@ -1,4 +1,6 @@
 from dotenv import load_dotenv
+import numpy as np
+import requests
 
 from scripts.twitter import TwitterApi
 from scripts.database import DataBase
@@ -6,7 +8,8 @@ from scripts.unhcr import Unhcr
 from scripts.clean import Clean
 
 #Wordcloud imports
-from wordcloud import WordCloud
+from wordcloud import WordCloud, ImageColorGenerator
+from PIL import Image
 from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 import matplotlib.pyplot as plt
 
@@ -17,10 +20,14 @@ def get_hashtags_from_file():
 
 def display_wordcloud_no_stopwords(df):
     # Create and generate a word cloud image 
-    my_cloud = WordCloud(background_color='white').generate(' '.join(df['text']))
+    Mask = np.array(Image.open(requests.get('http://clipart-library.com/image_gallery2/Twitter-PNG-Image.png', stream=True).raw))
+    image_colors = ImageColorGenerator(Mask)
+
+    # Create and generate a word cloud image 
+    my_cloud = WordCloud(background_color='black', mask=Mask).generate(' '.join(df['text']))
 
     # Display the generated wordcloud image
-    plt.imshow(my_cloud, interpolation='bilinear') 
+    plt.imshow(my_cloud.recolor(color_func=image_colors), interpolation='bilinear') 
     plt.axis("off")
 
     # Don't forget to show the final image
@@ -39,11 +46,11 @@ if __name__ == "__main__":
     twitter, unhcr, db = __init__()
     tweets = db.get_tweets()
     print(tweets)
-    cleaned_tweets = Clean(tweets)
+    # cleaned_tweets = Clean(tweets)
 
-    matrix = cleaned_tweets.matrix
-    print(matrix)
+    # matrix = cleaned_tweets.matrix
+    # print(matrix)
     # cleaned_tweets.display_wordcloud()
 
     # test = twitter.get_hashtags(get_hashtags_from_file(), 1)
-    # display_wordcloud_no_stopwords(tweets)
+    display_wordcloud_no_stopwords(tweets)

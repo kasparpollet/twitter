@@ -1,16 +1,21 @@
 import re
+import urllib
+import requests
 import pandas as pd
+import numpy as np
 
 #Natural language processing tool-kit
 import nltk           
 from nltk.corpus import stopwords
+from nltk import PorterStemmer
 
 from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 
 # from main import get_hashtags_from_file
 
 #Wordcloud imports
-from wordcloud import WordCloud
+from wordcloud import WordCloud, ImageColorGenerator
+from PIL import Image
 import matplotlib.pyplot as plt
 
 
@@ -45,6 +50,13 @@ class Clean:
 
     def tokenize(self):
         vec = CountVectorizer(lowercase=True, stop_words='english')
+
+        # Stemming
+        # ps = PorterStemmer()
+        # self.df['text'] = self.df['text'].tolist()
+        # self.df['text'] = self.df['text'].apply(lambda x: [ps.stem(i) for i in x])
+        # self.df['text'] = self.df['text'].apply(lambda x: ''.join([i for i in x]))
+
         wordcount = vec.fit_transform(self.df['text'].tolist())
         tokens = vec.get_feature_names_out()
         matrix = self.__dtm(wordcount, tokens)
@@ -59,15 +71,20 @@ class Clean:
 
     def display_wordcloud(self):
         from main import get_hashtags_from_file
+
+        Mask = np.array(Image.open(requests.get('http://clipart-library.com/image_gallery2/Twitter-PNG-Image.png', stream=True).raw))
+        image_colors = ImageColorGenerator(Mask)
+
+
         unuseful_words = [word.replace('#', '').lower() for word in get_hashtags_from_file()]
         unuseful_words += ['https', 't', 'afghan', 'afghanistan', 'new', 'amp', 's']
         my_stopwords = ENGLISH_STOP_WORDS.union(unuseful_words)
 
         # Create and generate a word cloud image 
-        my_cloud = WordCloud(background_color='white',stopwords=my_stopwords).generate(' '.join(self.df['text']))
+        my_cloud = WordCloud(background_color='black',stopwords=my_stopwords, mask=Mask).generate(' '.join(self.df['text']))
 
         # Display the generated wordcloud image
-        plt.imshow(my_cloud, interpolation='bilinear') 
+        plt.imshow(my_cloud.recolor(color_func=image_colors), interpolation='bilinear') 
         plt.axis("off")
 
         # Don't forget to show the final image
