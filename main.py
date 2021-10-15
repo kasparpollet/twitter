@@ -18,6 +18,11 @@ def get_hashtags_from_file():
         content = [line.split('\n')[0] for line in f.readlines()]
     return content
 
+def get_locations_from_file():
+    with open('./files/locations.txt') as f:
+        content = [line.split('\n')[0].split(';') for line in f.readlines()]
+    return content
+
 def display_wordcloud_no_stopwords(df):
     # Create and generate a word cloud image 
     Mask = np.array(Image.open(requests.get('http://clipart-library.com/image_gallery2/Twitter-PNG-Image.png', stream=True).raw))
@@ -44,13 +49,16 @@ def __init__():
 if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
-    # tweets = db.get_tweets()
-    # print(tweets)
+    #tweets = db.get_tweets()
+    #print(tweets)
     # cleaned_tweets = Clean(tweets)
 
     # matrix = cleaned_tweets.matrix
     # print(matrix)
     # cleaned_tweets.display_wordcloud()
+    print(get_locations_from_file())
 
-    test = twitter.get_hashtags(get_hashtags_from_file(), 1)
-    # display_wordcloud_no_stopwords(tweets)
+    test = twitter.get_hashtags(get_hashtags_from_file(), get_locations_from_file())
+    print(test)
+    #display_wordcloud_no_stopwords(tweets)
+
