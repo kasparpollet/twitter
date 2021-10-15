@@ -31,7 +31,6 @@ class TwitterApi:
         #Max Tweets the function retrieves
         MAX_TWEETS = 1
         twlist = []
-        germany_geo = '51.165691,10.451526,291km'
         try:
             #Loops through every hashtag, for every hashtag there is an API call done to retrieve the tweets from that
             #specific hashtag
@@ -41,12 +40,7 @@ class TwitterApi:
                     print('getting:', hashtag)
                     tweets = tweepy.Cursor(self.api.search_tweets,
                                     q=f'{hashtag} -filter:retweets', geocode= geo,
-                                    lang="en", tweet_mode='extended').items(MAX_TWEETS)
-                    # tweets = tweepy.Cursor(self.api.search_full_archive,
-                    #                 query=f'{hashtag}',# toDate=id, 
-                    #                 maxResults=MAX_TWEETS, label='Tweets',
-                    #                 ).items()
-                    # tweets_no_urls = [remove_url(tweet.text) for tweet in tweets]
+                                    tweet_mode='extended').items(MAX_TWEETS)
                     twlistap = [[tweet.id, tweet.full_text, tweet.created_at, tweet.user.id, tweet.user.location, country] for tweet in tweets]
                     twlist.extend(twlistap)
         except Exception as e:
