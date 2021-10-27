@@ -28,13 +28,9 @@ class Clean:
         # self.matrix = self.tokenize()
 
     def __clean(self, df):
-        # df['text'] = df['text'].apply(lambda x: self.__clean_text(str(x)))
-        # return df
-
         print('\nStart cleaning the dataframe...')
         start = time.time()
 
-        # cleaned_df = pd.DataFrame(columns=['id', 'text', 'language', 'created_at', 'user_id', 'user_lacation', 'geo_location'])
         new_tweets = []
 
         for index, tweet in df.iterrows():
@@ -51,7 +47,6 @@ class Clean:
                 tweet.text = self.__clean_text(tweet.text, stop_words, stemmer)
                 new_tweets.append(list(tweet))
 
-        # cleaned_df = pd.DataFrame(new_tweets, columns=['id', 'text', 'language', 'created_at', 'user_id', 'user_lacation', 'geo_location'])
         cleaned_df = pd.DataFrame(new_tweets, columns=[col for col in df])
 
         # Remove empty reviews
@@ -64,14 +59,12 @@ class Clean:
         return cleaned_df
 
     def __clean_text(self, text, stop_words, stemmer):
-        whitelist = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ')
+        whitelist = set('abcdefghijklmnopqrstuvwxyz# ABCDEFGHIJKLMNOPQRSTUVWXYZ')
         clean_text = text.replace("<br>", " ")
         clean_text = clean_text.replace("\n", " ")
         clean_text = clean_text.encode('ascii', 'ignore').decode('ascii')
-        #clean_text = ''.join(i + ' ' for i in clean_text.split() if not i.startswith('http') or not i.startswith('@'))
-        clean_text = re.sub('@[\w]+','',text) #Deleting usernames
-        clean_text = re.sub('http[\w]+','',text) #Deleting urls
-        clean_text = ''.join(i + ' ' for i in [stemmer.stem(word) for word in text.lower().split() if word not in stop_words])
+        clean_text = ''.join(i + ' ' for i in clean_text.split() if not i.startswith('http') and not i.startswith('@'))
+        clean_text = ''.join(i + ' ' for i in [stemmer.stem(word) for word in clean_text.lower().split() if word not in stop_words])
         return ''.join(filter(whitelist.__contains__, clean_text))
 
     def __get_stopwords(self, language):
