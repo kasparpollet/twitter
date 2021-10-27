@@ -38,27 +38,40 @@ def display_wordcloud_no_stopwords(df):
     # Don't forget to show the final image
     plt.show()
 
+def test(text):
+    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+    analyzer = SentimentIntensityAnalyzer()
+    print(text)
+    print(analyzer.polarity_scores(text))
+    return analyzer.polarity_scores(text)
+
 
 def __init__():
     load_dotenv()
     twitter = TwitterApi()
     unhcr = Unhcr()
-    db = DataBase('newTweets')
+    db = DataBase('tweetsCountry')
     return twitter, unhcr, db
 
 if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
-    #tweets = db.get_tweets()
-    #print(tweets)
-    # cleaned_tweets = Clean(tweets)
+    tweets = db.get_tweets()
+    # print(tweets['text'].apply(lambda x: print(x)))
+    cleaned_tweets = Clean(tweets)
+    print(cleaned_tweets.df)
+    db.upload_data(cleaned_tweets.df, 'CleanedData', error='replace')
+    # poep = tweets.text.tolist()
+    # test(poep[0])
+    # tweets['text'].apply(lambda x: test(str(x)))
 
     # matrix = cleaned_tweets.matrix
     # print(matrix)
     # cleaned_tweets.display_wordcloud()
-    print(get_locations_from_file())
+    # print(get_locations_from_file())
 
-    test = twitter.get_hashtags(get_hashtags_from_file(), get_locations_from_file())
-    print(test)
+    # test = twitter.get_hashtags(['refugee'], get_locations_from_file())
+    # db.upload_data(test, 'test', error='replace')
+    # print(test)
     #display_wordcloud_no_stopwords(tweets)
 

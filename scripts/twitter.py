@@ -29,7 +29,7 @@ class TwitterApi:
     def get_hashtags(self, hashtags, locations):
 
         #Max Tweets the function retrieves
-        MAX_TWEETS = 1
+        MAX_TWEETS = 10
         twlist = []
         try:
             #Loops through every hashtag, for every hashtag there is an API call done to retrieve the tweets from that
@@ -41,7 +41,7 @@ class TwitterApi:
                     tweets = tweepy.Cursor(self.api.search_tweets,
                                     q=f'{hashtag} -filter:retweets', geocode= geo,
                                     tweet_mode='extended').items(MAX_TWEETS)
-                    twlistap = [[tweet.id, tweet.full_text, tweet.created_at, tweet.user.id, tweet.user.location, country] for tweet in tweets]
+                    twlistap = [[tweet.id, tweet.full_text, tweet.lang, tweet.created_at, tweet.user.id, tweet.user.location, country] for tweet in tweets]
                     twlist.extend(twlistap)
         except Exception as e:
             print(e)
@@ -49,7 +49,7 @@ class TwitterApi:
         print(twlist)
         print('finished')
 
-        return pd.DataFrame(data=twlist, columns=['id', 'text', 'created_at', 'user_id', 'user_location', 'geo_location'])        
+        return pd.DataFrame(data=twlist, columns=['id', 'text', 'language', 'created_at', 'user_id', 'user_location', 'geo_location'])        
 
 
     def get_id(self, id):

@@ -1,13 +1,14 @@
 import re
 import urllib
+from numpy.lib.function_base import delete
 import requests
 import pandas as pd
 import numpy as np
+import time
 
 #Natural language processing tool-kit
 import nltk           
 from nltk.corpus import stopwords
-from nltk import PorterStemmer
 
 from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 
@@ -17,19 +18,52 @@ from sklearn.feature_extraction.text import CountVectorizer, ENGLISH_STOP_WORDS
 from wordcloud import WordCloud, ImageColorGenerator
 from PIL import Image
 import matplotlib.pyplot as plt
+# nltk.download("stopwords")
 
 
 class Clean:
     def __init__(self, df):
         self.df = self.__clean(df)
-        self.remove_stopwords()
-        self.matrix = self.tokenize()
+        # self.remove_stopwords()
+        # self.matrix = self.tokenize()
 
     def __clean(self, df):
-        df['text'] = df['text'].apply(lambda x: self.__clean_text(str(x)))
-        return df
+        # df['text'] = df['text'].apply(lambda x: self.__clean_text(str(x)))
+        # return df
 
-    def __clean_text(self, text):
+        print('\nStart cleaning the dataframe...')
+        start = time.time()
+
+        # cleaned_df = pd.DataFrame(columns=['id', 'text', 'language', 'created_at', 'user_id', 'user_lacation', 'geo_location'])
+        new_tweets = []
+
+        for index, tweet in df.iterrows():
+
+            if tweet.language in ['en', 'es', 'de']:
+                if tweet.language == 'en':
+                    lang = 'english'
+                if tweet.language == 'es':
+                    lang = 'spanish'
+                if tweet.language == 'de':
+                    lang = 'german'
+                stop_words = self.__get_stopwords(lang)
+                stemmer = self.__get_stemmer(lang)
+                tweet.text = self.__clean_text(tweet.text, stop_words, stemmer)
+                new_tweets.append(list(tweet))
+
+        # cleaned_df = pd.DataFrame(new_tweets, columns=['id', 'text', 'language', 'created_at', 'user_id', 'user_lacation', 'geo_location'])
+        cleaned_df = pd.DataFrame(new_tweets, columns=[col for col in df])
+
+        # Remove empty reviews
+        cleaned_df = cleaned_df.loc[lambda x: x['text'] != '']
+
+        cleaned_df.reset_index(inplace=True, drop=True)
+
+        end = time.time()
+        print(f'Finished cleaning the dataframe in {end-start} seconds')
+        return cleaned_df
+
+    def __clean_text(self, text, stop_words, stemmer):
         whitelist = set('abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ')
         clean_text = text.replace("<br>", " ")
         clean_text = clean_text.replace("\n", " ")
@@ -37,27 +71,22 @@ class Clean:
         #clean_text = ''.join(i + ' ' for i in clean_text.split() if not i.startswith('http') or not i.startswith('@'))
         clean_text = re.sub('@[\w]+','',text) #Deleting usernames
         clean_text = re.sub('http[\w]+','',text) #Deleting urls
+        clean_text = ''.join(i + ' ' for i in [stemmer.stem(word) for word in text.lower().split() if word not in stop_words])
         return ''.join(filter(whitelist.__contains__, clean_text))
 
-    def remove_stopwords(self):
-        # Create stopword list
-        nltk.download("stopwords")
-        stop = set(stopwords.words('english'))
-        snow = nltk.stem.SnowballStemmer('english')
+    def __get_stopwords(self, language):
+        """
+        Cobine nltk's and hotel reviews specific stopwords and returns these as a set
+        """
+        stop_words = stopwords.words(language)
+        return list(set(stop_words))
 
-        for index, row in self.df.iterrows():
-            words = ''.join(i + ' ' for i in [snow.stem(word) for word in row['text'].split() if word not in stop])
-            self.df.at[index, 'text'] = words
-        return self
+    def __get_stemmer(self, language):
+        stemmer = nltk.stem.SnowballStemmer(language, ignore_stopwords=True)
+        return stemmer
 
     def tokenize(self):
         vec = CountVectorizer(lowercase=True, stop_words='english')
-
-        # Stemming
-        # ps = PorterStemmer()
-        # self.df['text'] = self.df['text'].tolist()
-        # self.df['text'] = self.df['text'].apply(lambda x: [ps.stem(i) for i in x])
-        # self.df['text'] = self.df['text'].apply(lambda x: ''.join([i for i in x]))
 
         wordcount = vec.fit_transform(self.df['text'].tolist())
         tokens = vec.get_feature_names_out()
