@@ -34,7 +34,9 @@ class Clean:
         clean_text = text.replace("<br>", " ")
         clean_text = clean_text.replace("\n", " ")
         clean_text = clean_text.encode('ascii', 'ignore').decode('ascii')
-        clean_text = ''.join(i + ' ' for i in clean_text.split() if not i.startswith('http'))
+        #clean_text = ''.join(i + ' ' for i in clean_text.split() if not i.startswith('http') or not i.startswith('@'))
+        clean_text = re.sub('@[\w]+','',text) #Deleting usernames
+        clean_text = re.sub('http[\w]+','',text) #Deleting urls
         return ''.join(filter(whitelist.__contains__, clean_text))
 
     def remove_stopwords(self):
