@@ -6,11 +6,13 @@ import pymysql
 class DataBase:
     
     def __init__(self, table):
-        self.get_engine = pymysql.connect(host='oege.ie.hva.nl',user='polletk', password=os.getenv('DATABASE_PASSWORD'), database='zpolletk', cursorclass=pymysql.cursors.DictCursor)
+        print('Creating database connection...')
+        self.get_engine = pymysql.connect(host='oege.ie.hva.nl',user='polletk', password=os.getenv('DATABASE_PASSWORD'), database='zpolletk', cursorclass=pymysql.cursors.DictCursor, ssl={"fake_flag_to_enable_tls":True})
         self.put_engine = create_engine(os.getenv('DATABASE_URL'))
         self.table = table
 
     def __get(self, table):
+        print('\nGetting data from database...')
         return pd.read_sql_query(f"CALL allData('{table}')", con=self.get_engine)
 
     def get_unhcr(self):

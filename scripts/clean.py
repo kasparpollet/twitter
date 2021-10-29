@@ -31,6 +31,10 @@ class Clean:
         print('\nStart cleaning the dataframe...')
         start = time.time()
 
+        df['hashtags'] = ''
+
+        df.drop_duplicates(subset=["id"],inplace=True)
+
         new_tweets = []
 
         for index, tweet in df.iterrows():
@@ -42,15 +46,23 @@ class Clean:
                     lang = 'spanish'
                 if tweet.language == 'de':
                     lang = 'german'
+
+                hashtags = ''.join(j + ' ' for j in [i for i in tweet.text.split() if i.startswith('#')])
+
                 stop_words = self.__get_stopwords(lang)
                 stemmer = self.__get_stemmer(lang)
                 tweet.text = self.__clean_text(tweet.text, stop_words, stemmer)
+                tweet.hashtags = hashtags
                 new_tweets.append(list(tweet))
 
         cleaned_df = pd.DataFrame(new_tweets, columns=[col for col in df])
 
         # Remove empty reviews
         cleaned_df = cleaned_df.loc[lambda x: x['text'] != '']
+
+        # Drop duplicates after cleaning
+        cleaned_df.drop_duplicates(subset=["text"],inplace=True)
+        cleaned_df.geo_location = cleaned_df.geo_location.apply(lambda x: re.sub(r'[0-9]+', '', x))
 
         cleaned_df.reset_index(inplace=True, drop=True)
 
