@@ -91,7 +91,7 @@ class Clean:
         return stemmer
 
     def tokenize(self):
-        vec = CountVectorizer(lowercase=True, stop_words='english')
+        vec = CountVectorizer(ngram_range=(1, 2), max_features=10000, lowercase=True, stop_words='english')
 
         wordcount = vec.fit_transform(self.df['text'].tolist())
         tokens = vec.get_feature_names_out()
