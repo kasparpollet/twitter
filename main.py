@@ -6,7 +6,8 @@ from scripts.twitter import TwitterApi
 from scripts.database import DataBase
 from scripts.unhcr import Unhcr
 from scripts.clean import Clean
-
+from scripts.patterntryout import tryout
+from scripts.words import graph
 #Wordcloud imports
 from wordcloud import WordCloud, ImageColorGenerator
 from PIL import Image
@@ -50,7 +51,7 @@ def __init__():
     load_dotenv()
     twitter = TwitterApi()
     unhcr = Unhcr()
-    db = DataBase('tweetsCountry')
+    db = DataBase('CleanedDataNew')
     return twitter, unhcr, db
 
 if __name__ == "__main__":
@@ -58,9 +59,8 @@ if __name__ == "__main__":
     twitter, unhcr, db = __init__()
     tweets = db.get_tweets()
     # print(tweets['text'].apply(lambda x: print(x)))
-    cleaned_tweets = Clean(tweets)
-    print(cleaned_tweets.df)
-    db.upload_data(cleaned_tweets.df, 'CleanedData', error='replace')
+    # print(cleaned_tweets.df)
+    # db.upload_data(cleaned_tweets.df, 'CleanedData', error='replace')
     # poep = tweets.text.tolist()
     # test(poep[0])
     # tweets['text'].apply(lambda x: test(str(x)))
