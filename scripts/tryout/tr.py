@@ -37,7 +37,7 @@ def t(df):
                 final_text.append(word.lower())
         return  ' '.join(final_text)
 
-    df.tweets = df.tweets.apply(furnished)
+    df.text = df.text.apply(furnished)
 
     positive_related_words = '''good positive nice'''
     negative_related_words = '''hate bad fuck'''
@@ -63,11 +63,12 @@ def t(df):
             scores.append(s)
         return scores
 
-    pos_scores = get_scores(positive, df.tweets.to_list())
-    neg_scores = get_scores(negative, df.tweets.to_list())
-
+    pos_scores = get_scores(positive, df.text.to_list())
+    neg_scores = get_scores(negative, df.text.to_list())
+    print(len(pos_scores))
+    print(len(neg_scores))
     # create a jaccard scored df.
-    data  = {'names':df.screen_name.to_list(), 'pos_score':pos_scores,
+    data  = {'names':['positive', 'negative'], 'pos_score':pos_scores,
             'neg_score': neg_scores}
     scores_df = pd.DataFrame(data)
     #assign classes based on highest score

@@ -6,8 +6,8 @@ from scripts.twitter import TwitterApi
 from scripts.database import DataBase
 from scripts.unhcr import Unhcr
 from scripts.clean import Clean
-from scripts.patterntryout import tryout
 from scripts.words import graph
+from scripts.tryout.tr import t
 #Wordcloud imports
 from wordcloud import WordCloud, ImageColorGenerator
 from PIL import Image
@@ -58,6 +58,7 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
     tweets = db.get_tweets()
+    t(tweets)
     # print(tweets['text'].apply(lambda x: print(x)))
     # print(cleaned_tweets.df)
     # db.upload_data(cleaned_tweets.df, 'CleanedData', error='replace')
