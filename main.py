@@ -6,7 +6,7 @@ from scripts.twitter import TwitterApi
 from scripts.database import DataBase
 from scripts.unhcr import Unhcr
 from scripts.clean import Clean
-from scripts.words import graph
+from scripts.words import graph, display_wordcloud
 from scripts.tryout.tr import t
 #Wordcloud imports
 from wordcloud import WordCloud, ImageColorGenerator
@@ -60,29 +60,21 @@ def __init__():
     load_dotenv()
     twitter = TwitterApi()
     unhcr = Unhcr()
-    db = DataBase('CleanedDataNew')
+    db = DataBase('TestSentiment')
     return twitter, unhcr, db
 
 if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
     df = db.get_tweets()
-    # print(tweets['text'].apply(lambda x: print(x)))
-    # print(cleaned_tweets.df)
-    # db.upload_data(cleaned_tweets.df, 'CleanedData', error='replace')
-    # poep = tweets.text.tolist()
-    # test(poep[0])
-    # tweets['text'].apply(lambda x: test(str(x)))
-
-    # matrix = cleaned_tweets.matrix
-    # print(matrix)
-    # cleaned_tweets.display_wordcloud()
-    # print(get_locations_from_file())
+    graph(df[(df.sentiment_pos > 0.5)], len=20, name='Positive Tweats (>0.5)')
+    graph(df[(df.sentiment_neg > 0.3)], len=20, name='Negative Tweats (>0.5)')
+    # graph(df[(df.sentiment_neu > 0.5)], len=20)
 
     # clean = Clean(df)
     # df = clean.df
     
-    df = do_sentiment(df)
-    print(df)
+    # df = do_sentiment(df)
+    # print(df)
     # db.upload_data(df, 'TestSentiment', error='replace')
 
