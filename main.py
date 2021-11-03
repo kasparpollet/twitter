@@ -38,40 +38,41 @@ def display_wordcloud_no_stopwords(df):
     # Don't forget to show the final image
     plt.show()
 
-def test(text):
-    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-    analyzer = SentimentIntensityAnalyzer()
-    print(text)
-    print(analyzer.polarity_scores(text))
-    return analyzer.polarity_scores(text)
+def get_sentiment(analyzer, texts):
+    texts = texts.apply(lambda x: str(analyzer.polarity_scores(x)))
+    return texts
 
+def do_sentiment(df):
+    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+    import json
+
+    analyzer = SentimentIntensityAnalyzer()
+    df['sentiment'] = get_sentiment(analyzer, df['text'])
+    df['sentiment_neg'] = df['sentiment'].apply(lambda x: json.loads(x.replace("'",'"'))['neg'])
+    df['sentiment_neu'] = df['sentiment'].apply(lambda x: json.loads(x.replace("'",'"'))['neu'])
+    df['sentiment_pos'] = df['sentiment'].apply(lambda x: json.loads(x.replace("'",'"'))['pos'])
+    df['sentiment_compound'] = df['sentiment'].apply(lambda x: json.loads(x.replace("'",'"'))['compound'])
+    df.drop('sentiment', axis=1, inplace=True)
+    return df
 
 def __init__():
     load_dotenv()
     twitter = TwitterApi()
     unhcr = Unhcr()
-    db = DataBase('tweetsCountry')
+    db = DataBase('CleanedDataNew')
     return twitter, unhcr, db
 
 if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
-    tweets = db.get_tweets()
-    # print(tweets['text'].apply(lambda x: print(x)))
-    cleaned_tweets = Clean(tweets)
-    print(cleaned_tweets.df)
-    db.upload_data(cleaned_tweets.df, 'CleanedData', error='replace')
-    # poep = tweets.text.tolist()
-    # test(poep[0])
-    # tweets['text'].apply(lambda x: test(str(x)))
+    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+    analyzer = SentimentIntensityAnalyzer()
+    df = db.get_tweets()
+    print(df)
 
-    # matrix = cleaned_tweets.matrix
-    # print(matrix)
-    # cleaned_tweets.display_wordcloud()
-    # print(get_locations_from_file())
-
-    # test = twitter.get_hashtags(['refugee'], get_locations_from_file())
-    # db.upload_data(test, 'test', error='replace')
-    # print(test)
-    #display_wordcloud_no_stopwords(tweets)
+    # clean = Clean(df)
+    # df = clean.df
+    
+    df = do_sentiment(df)
+    db.upload_data(df, 'TestSentiment', error='replace')
 
