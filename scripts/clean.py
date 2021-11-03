@@ -88,6 +88,7 @@ class Clean:
         stemmer = nltk.stem.SnowballStemmer(language, ignore_stopwords=True)
         return stemmer
 
+<<<<<<< HEAD
     def display_wordcloud(self):
         from main import get_hashtags_from_file
 
@@ -108,4 +109,22 @@ class Clean:
 
         # Don't forget to show the final image
         plt.show()
+=======
+    def tokenize(self):
+        vec = CountVectorizer(ngram_range=(1, 2), max_features=1000, lowercase=True, stop_words='english')
+
+        wordcount = vec.fit_transform(self.df['text'].tolist())
+        tokens = vec.get_feature_names_out()
+        matrix = self.__dtm(wordcount, tokens)
+        return matrix
+
+    def __dtm(self, wm, feat_names):
+        # create an index for each row
+        doc_names = ['Doc{:d}'.format(idx) for idx, _ in enumerate(wm)]
+        matrix = pd.DataFrame(data=wm.toarray(), index=doc_names,
+                        columns=feat_names)
+        return matrix
+
+    
+>>>>>>> 81b9183dbf194b64d4e0bb97c1f46a0d1e841222
 

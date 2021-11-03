@@ -6,7 +6,8 @@ from scripts.twitter import TwitterApi
 from scripts.database import DataBase
 from scripts.unhcr import Unhcr
 from scripts.clean import Clean
-
+from scripts.words import graph
+from scripts.tryout.tr import t
 #Wordcloud imports
 from wordcloud import WordCloud, ImageColorGenerator
 from PIL import Image
@@ -65,14 +66,23 @@ def __init__():
 if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
-    from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
-    analyzer = SentimentIntensityAnalyzer()
     df = db.get_tweets()
-    print(df)
+    # print(tweets['text'].apply(lambda x: print(x)))
+    # print(cleaned_tweets.df)
+    # db.upload_data(cleaned_tweets.df, 'CleanedData', error='replace')
+    # poep = tweets.text.tolist()
+    # test(poep[0])
+    # tweets['text'].apply(lambda x: test(str(x)))
+
+    # matrix = cleaned_tweets.matrix
+    # print(matrix)
+    # cleaned_tweets.display_wordcloud()
+    # print(get_locations_from_file())
 
     # clean = Clean(df)
     # df = clean.df
     
     df = do_sentiment(df)
-    db.upload_data(df, 'TestSentiment', error='replace')
+    print(df)
+    # db.upload_data(df, 'TestSentiment', error='replace')
 
