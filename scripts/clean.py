@@ -24,8 +24,6 @@ import matplotlib.pyplot as plt
 class Clean:
     def __init__(self, df):
         self.df = self.__clean(df)
-        # self.remove_stopwords()
-        # self.matrix = self.tokenize()
 
     def __clean(self, df):
         print('\nStart cleaning the dataframe...')
@@ -89,21 +87,6 @@ class Clean:
     def __get_stemmer(self, language):
         stemmer = nltk.stem.SnowballStemmer(language, ignore_stopwords=True)
         return stemmer
-
-    def tokenize(self):
-        vec = CountVectorizer(ngram_range=(1, 2), max_features=10000, lowercase=True, stop_words='english')
-
-        wordcount = vec.fit_transform(self.df['text'].tolist())
-        tokens = vec.get_feature_names_out()
-        matrix = self.__dtm(wordcount, tokens)
-        return matrix
-
-    def __dtm(self, wm, feat_names):
-        # create an index for each row
-        doc_names = ['Doc{:d}'.format(idx) for idx, _ in enumerate(wm)]
-        matrix = pd.DataFrame(data=wm.toarray(), index=doc_names,
-                        columns=feat_names)
-        return matrix
 
     def display_wordcloud(self):
         from main import get_hashtags_from_file
