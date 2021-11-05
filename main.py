@@ -8,6 +8,7 @@ from scripts.unhcr import Unhcr
 from scripts.clean import Clean
 from scripts.words import graph, display_wordcloud
 from scripts.tryout.tr import t
+from scripts.tryout.tfidfkmeans import trying
 #Wordcloud imports
 from wordcloud import WordCloud, ImageColorGenerator
 from PIL import Image
@@ -67,8 +68,9 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
     df = db.get_tweets()
-    graph(df[(df.sentiment_pos > 0.5)], len=20, name='Positive Tweats (>0.5)')
-    graph(df[(df.sentiment_neg > 0.3)], len=20, name='Negative Tweats (>0.5)')
+    trying(df)
+    # graph(df[(df.sentiment_pos > 0.5)], len=20, name='Positive Tweats (>0.5)')
+    # graph(df[(df.sentiment_neg > 0.3)], len=20, name='Negative Tweats (>0.5)')
     # graph(df[(df.sentiment_neu > 0.5)], len=20)
 
     # clean = Clean(df)

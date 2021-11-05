@@ -20,7 +20,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import jaccard_score
 
 def t(df):
-
+    #print(df.info())
+    df = df[df['language'] == 'en']
     #nlp = en_core_web_sm.load() 
     tokenizer = RegexpTokenizer(r'\w+')
     lemmatizer = WordNetLemmatizer()
@@ -38,9 +39,20 @@ def t(df):
         return  ' '.join(final_text)
 
     df.text = df.text.apply(furnished)
+    pos_rel_list = [ 'help', 'support', 'like', 'need', 'thank', 'welcom', 'love', 'work', 'care', 'want', 'get', 'good', 'join', 'make', 'countri', 'new', 'great', 'would', 'asylum', 'look', 'live', 'famili', 'share', 'see', 'free', 'hope', 'come', 'well', 'go', 'take', 'right', 'way', 'children', 'mani', 'here', 'pleas', 'protect']
+    neu_rel_list = ['us', 'peopl', 'help', 'need', 'support', 'like', 'get', 'welcom', 'countri', 'work', 'new', '#refuge', 'one', 'asylum', 'live', 'right', 'immigr', 'mani', 'come', 'take', 'uk', 'make', 'go', 'state', 'would', 'year', 'want', 'camp', 'resettl', 'children', 'border', 'famili', 'govern', 'say', 'home', 'afghanistan', 'world', 'see', 'know', 'time', 'look', 'today', 'refugee', 'hous', 'think', 'im']
+    neg_rel_list = ['war', 'kill', 'rape', 'stop', 'govern', 'border', 'drown', 'murder', 'death', 'take', 'go', 'say', 'attack', 'camp', 'call', 'charg', 'montana', 'hate', 'biden', 'dont', 'back', 'world']
+    
+    def listToString(s): 
+        # initialize an empty string
+        str1 = "" 
+        # traverse in the string  
+        for ele in s: 
+            str1 += ele   
+        return str1
 
-    positive_related_words = '''good positive nice'''
-    negative_related_words = '''hate bad fuck'''
+    positive_related_words = listToString(pos_rel_list)
+    negative_related_words = listToString(neg_rel_list)
     positive = furnished(positive_related_words)
     negative = furnished(negative_related_words)
 
@@ -56,6 +68,7 @@ def t(df):
         intersection = set(query).intersection(set(document))
         union = set(query).union(set(document))
         return len(intersection)/len(union)
+
     def get_scores(group,tweets):
         scores = []
         for tweet in tweets:
@@ -65,11 +78,10 @@ def t(df):
 
     pos_scores = get_scores(positive, df.text.to_list())
     neg_scores = get_scores(negative, df.text.to_list())
-    print(len(pos_scores))
-    print(len(neg_scores))
+
     # create a jaccard scored df.
-    data  = {'names':['positive', 'negative'], 'pos_score':pos_scores,
-            'neg_score': neg_scores}
+    data  = {'names':df.user_id.to_list(), 'positive_score':pos_scores,
+            'negative_score': neg_scores}
     scores_df = pd.DataFrame(data)
     #assign classes based on highest score
     def get_classes(l1, l2):
@@ -108,4 +120,37 @@ def t(df):
     plt.title('A pie chart showing the volumes of tweets under different categories.')
     plt.show()
 
+    X = new_groups_df[['positive', 'negative']].values
+    X = X[:-1]
+    print(X)
+    # Elbow Method
+    from sklearn.cluster import KMeans
+    wcss = []
+    for i in range(1, 11):
+        kmeans = KMeans(n_clusters=i, init='k-means++', n_init=10, max_iter=300, random_state=0)
+        kmeans.fit(X)
+        wcss.append(kmeans.inertia_)
+    plt.plot(range(1,11), wcss)
+    plt.title('Elbow Method')
+    plt.xlabel('Number of Clusters')
+    plt.ylabel('wcss')
+    plt.show()
 
+
+    # fitting kmeans to dataset
+    kmeans = KMeans(n_clusters=2, init='k-means++', n_init=10, max_iter=300, random_state=0)
+    print(X)
+    Y_kmeans = kmeans.fit_predict(X)
+    print(Y_kmeans)
+    # Visualising the clusters
+    plt.scatter(X[Y_kmeans==0, 0], X[Y_kmeans==0, 1],  c='red', label= 'Cluster 1')
+    plt.scatter(X[Y_kmeans==1, 0], X[Y_kmeans==1, 1],  c='green', label= 'Cluster 2')
+    
+
+
+    plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], c='black', label='Centroids' )
+    plt.title('Clusters of tweets in positive and negative groups')
+    plt.xlabel('positive tweets')
+    plt.ylabel('negative tweets')
+    plt.legend()
+    plt.show()
