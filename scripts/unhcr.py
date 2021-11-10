@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 class Unhcr:
     
     def exploration(self):    
-        df = pd.read_csv("../files/csvs/population.csv", header=13)
+        df = pd.read_csv("files/csvs/population.csv", header=13)
     
         df = df.drop(columns=['Country of origin', 'Country of origin (ISO)', 'Venezuelans displaced abroad'])
     
@@ -40,8 +40,8 @@ class Unhcr:
             title = 'Top 10 Countries of asylum (2006-2020)', 
             color = 'blue')
         chart.set_ylabel('')
-        chart
-    
+        chart.show()
+
         def select_country(country):
             return df.query("country_of_asylum == {}").format(country)
     
@@ -91,5 +91,3 @@ class Unhcr:
     
         plt.title("Refugees times series by country (2006-2020) without Pakistan, Iran and Germany")
         ax.legend(frameon=False)
-
-        return df
