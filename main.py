@@ -67,8 +67,9 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
     df = db.get_tweets()
-    graph(df[(df.sentiment_pos > 0.5)], len=20, name='Positive Tweats (>0.5)')
-    graph(df[(df.sentiment_neg > 0.3)], len=20, name='Negative Tweats (>0.5)')
+    graph(df[(df.sentiment_neu > 0.5)], len=50, name='Neutral Tweats (>0.5)')
+    graph(df[(df.sentiment_pos > 0.2)], len=50, name='Positive Tweats (>0.2)')
+    graph(df[(df.sentiment_neg > 0.2)], len=50, name='Negative Tweats (>0.2)')
     # graph(df[(df.sentiment_neu > 0.5)], len=20)
 
     # clean = Clean(df)

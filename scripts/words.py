@@ -32,9 +32,8 @@ def graph(df, len=20, name='words'):
     word_frequency = pd.Series(' '.join(df['text']).lower().split()).value_counts().to_dict()
     word_frequency = dict(Counter(word_frequency).most_common(len))
 
-    print(word_frequency)
+    # print(word_frequency)
     frecuency = list(word_frequency.values())
-
     labels = [*word_frequency]
     title = f"Word Frequency for {name}"
 
