@@ -68,7 +68,13 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
     df = db.get_tweets()
+    print(df)
+
+    df = df[df['language']=='en']
     trying(df)
+    df_clusters = trying(df)
+    print(df_clusters)
+    print(df_clusters.cluster.value_counts())
     # graph(df[(df.sentiment_pos > 0.5)], len=20, name='Positive Tweats (>0.5)')
     # graph(df[(df.sentiment_neg > 0.3)], len=20, name='Negative Tweats (>0.5)')
     # graph(df[(df.sentiment_neu > 0.5)], len=20)
@@ -78,5 +84,5 @@ if __name__ == "__main__":
     
     # df = do_sentiment(df)
     # print(df)
-    # db.upload_data(df, 'TestSentiment', error='replace')
+    #db.upload_data(df_clusters, 'TestSentimentClusters', error='replace')
 
