@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from scipy.spatial.distance import cdist
 
 from sklearn.cluster import MiniBatchKMeans
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -12,15 +13,16 @@ def trying(df):
     tfidf = TfidfVectorizer(
     min_df = 5,
     max_df = 0.95,
-    max_features = 1000,
+    #max_features = 10000,
     stop_words = 'english'
     )
 
     tfidf.fit(df.text)
     text = tfidf.transform(df.text)
+    
 
-    def find_optimal_clusters(data, max_k):
-        iters = range(2, max_k+1, 2)
+    def find_optimal_clusters_sse(data, max_k):
+        iters = range(2, max_k+1, 1)
         
         sse = []
         for k in iters:
@@ -35,9 +37,10 @@ def trying(df):
         ax.set_ylabel('SSE')
         ax.set_title('SSE by Cluster Center Plot')
         plt.show()
-        
-    find_optimal_clusters(text, 20)
-    clusters = MiniBatchKMeans(n_clusters=12, init_size=1024, batch_size=2048, random_state=20).fit_predict(text)
+
+    #find_optimal_clusters_sse(text, 20)
+    clusters = MiniBatchKMeans(n_clusters=18, init_size=1024, batch_size=2048, random_state=20).fit_predict(text)
+    df['cluster'] = clusters
 
     def plot_tsne_pca(data, labels):
         max_label = max(labels)
@@ -60,13 +63,14 @@ def trying(df):
         ax[1].set_title('TSNE Cluster Plot')
         plt.show()
         
-    plot_tsne_pca(text, clusters)
+    #plot_tsne_pca(text, clusters)
 
     def get_top_keywords(data, clusters, labels, n_terms):
         df = pd.DataFrame(data.todense()).groupby(clusters).mean()
-        
         for i,r in df.iterrows():
             print('\nCluster {}'.format(i))
             print(','.join([labels[t] for t in np.argsort(r)[-n_terms:]]))
                 
     get_top_keywords(text, clusters, tfidf.get_feature_names(), 10)
+
+    return df
