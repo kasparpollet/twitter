@@ -9,7 +9,7 @@ from scripts.clean import Clean
 from scripts.words import graph, display_wordcloud
 from scripts.classification_model import ClassificationModel, create_basic_models
 from scripts.tryout.tr import t
-from scripts.tryout.tfidfkmeans import trying
+from scripts.cluster import cluster
 
 
 def get_hashtags_from_file():
@@ -55,8 +55,19 @@ def do_sentiment(df, threshold=0.3):
     return df
 
 def new_tweets(df):
-    # Clean
-    pass
+    # Clean: rewrite the clean for new languages
+    clean = Clean(df)
+    df = clean.df
+    
+    # Do Sentiment on the data
+    df = do_sentiment(df)
+
+    # Cluster the tweets
+    df = cluster(df)
+    
+    # db.upload_data(df, 'finalTweets', error='extend')
+
+    return df
 
 def __init__():
     load_dotenv()
@@ -72,11 +83,5 @@ if __name__ == "__main__":
     df = db.get_tweets()
     df = df[df['language'] == 'en']
 
-
-    # clean = Clean(df)
-    # df = clean.df
-    
-    # df = do_sentiment(df)
-    # print(df)
-    db.upload_data(df, 'TestSentimentClusters03', error='replace')
+    # db.upload_data(df, 'TestSentimentClusters03', error='replace')
 
