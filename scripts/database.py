@@ -32,5 +32,5 @@ class DataBase:
             df.to_sql(name=name,con=self.put_engine,if_exists=error,index=False,chunksize=1000) 
             print('succesful uloaded data')
         except Exception as e:
-            print('something went wrong:', e)
+            print('something went wrong uploading data:', e)
         
