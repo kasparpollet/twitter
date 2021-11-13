@@ -60,37 +60,6 @@ class TwitterApi:
         tweets_data = [[tweet.id, tweet.full_text, tweet.lang, tweet.created_at, tweet.user.id, tweet.user.location, country] for tweet in tweets]
         return pd.DataFrame(data=tweets_data, columns=['id', 'text', 'language', 'created_at', 'user_id', 'user_location', 'geo_location'])
 
-
-    def test(self, hashtags, locations):
-
-        #Max Tweets the function retrieves
-        MAX_TWEETS = 3000
-        twlist = []
-        try:
-            #Loops through every hashtag, for every hashtag there is an API call done to retrieve the tweets from that
-            #specific hashtag
-            for geo, country in locations:
-                print('getting:', country)
-                for hashtag in hashtags:
-                    try:
-                        print('getting:', hashtag)
-                        tweets = tweepy.Cursor(self.api.search_tweets,
-                                        q=f'{hashtag} -filter:retweets', geocode= geo,
-                                        tweet_mode='extended').items(MAX_TWEETS)
-                        twlistap = [[tweet.id, tweet.full_text, tweet.lang, tweet.created_at, tweet.user.id, tweet.user.location, country] for tweet in tweets]
-                        twlist.extend(twlistap)
-                        print('sleeping for 15 minutes...')
-                        time.sleep(900)
-                    except Exception as e:
-                        print(e)
-        except Exception as e:
-            print(e)
-
-        print(twlist)
-        print('finished')
-
-        return pd.DataFrame(data=twlist, columns=['id', 'text', 'language', 'created_at', 'user_id', 'user_location', 'geo_location'])
-
     def get_id(self, id):
         headers = {
             'Authorization': f'Bearer {self.token}',
