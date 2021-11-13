@@ -81,7 +81,23 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
     df = db.get_tweets()
+<<<<<<< HEAD
     # df = df[df['language'] == 'en']
+=======
+<<<<<<< HEAD
+    #df = df[df['language'] == 'en']
+    create_basic_models(df)
+
+    # clean = Clean(df)
+    # df = clean.df
+    
+    # df = do_sentiment(df)
+    # print(df)
+    #db.upload_data(df, 'TestSentimentClusters03', error='replace')
+=======
+    df = df[df['language'] == 'en']
+>>>>>>> 56541c128d1c72514fc72225401eafffb7974702
 
     # db.upload_data(df, 'TestSentimentClusters03', error='replace')
+>>>>>>> 022136df1c6ac9b3ff8812852b249c7b39abf80a
 

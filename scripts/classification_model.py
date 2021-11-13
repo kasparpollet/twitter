@@ -12,10 +12,12 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import LabelBinarizer
+
 
 
 class ClassificationModel:
-    def __init__(self, df, model, X='text', y='label', test_size=0.2, k_fold=None, plot_auc=True, vec='count', max_features=10000, ngram_range=(1,2)):
+    def __init__(self, df, model, X='text', y='label', test_size=0.2, k_fold=None, plot_auc=False, vec='count', max_features=10000, ngram_range=(1,2)):
         self.df = df
         self.model = model
         self.X = X
@@ -73,6 +75,7 @@ class ClassificationModel:
 
         start = time.time()
         y = self.df[self.y]
+        y = y.factorize()[0]
         X = self.__create_matrix_df()
         print(y)
 
@@ -141,25 +144,25 @@ class ClassificationModel:
 
 
 def create_basic_models(df, pickle=False):
-    model = ClassificationModel(df, model=MultinomialNB(), k_fold=5, vec='tfid')
+    model = ClassificationModel(df, model=MultinomialNB(), vec='tfid', plot_auc = False)
     model.create_model()
     if pickle:
         pickle.dump(model.model, open('models/test_model.pickle', 'wb'))
         pickle.dump(model.vector, open('models/test_vec.pickle', 'wb'))
 
-    model = ClassificationModel(df, model=LogisticRegression(), k_fold=5, vec='tfid')
+    model = ClassificationModel(df, model=LogisticRegression(), vec='tfid')
     model.create_model()
     if pickle:
         pickle.dump(model.model, open('models/logistic_regression_model.pickle', 'wb'))
         pickle.dump(model.vec, open('models/logistic_regression_vec.pickle', 'wb'))
 
-    model = ClassificationModel(df, model=KNeighborsClassifier(), k_fold=5)
+    model = ClassificationModel(df, model=KNeighborsClassifier())
     model.create_model()
     if pickle:
         pickle.dump(model.model, open('models/knn_model.pickle', 'wb'))
         pickle.dump(model.vec, open('models/knn_vec.pickle', 'wb'))
 
-    model = ClassificationModel(df, model=RandomForestClassifier(), k_fold=5, vec='tfid')
+    model = ClassificationModel(df, model=RandomForestClassifier(), vec='tfid')
     model.create_model()
     if pickle:
         pickle.dump(model.model, open('models/random_forest_model.pickle', 'wb'))
