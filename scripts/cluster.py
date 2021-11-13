@@ -9,7 +9,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 
-def trying(df):
+def cluster(df):
     tfidf = TfidfVectorizer(
     min_df = 5,
     max_df = 0.95,
@@ -38,7 +38,7 @@ def trying(df):
         ax.set_title('SSE by Cluster Center Plot')
         plt.show()
 
-    #find_optimal_clusters_sse(text, 20)
+    find_optimal_clusters_sse(text, 20)
     clusters = MiniBatchKMeans(n_clusters=18, init_size=1024, batch_size=2048, random_state=20).fit_predict(text)
     df['cluster'] = clusters
 
@@ -63,7 +63,7 @@ def trying(df):
         ax[1].set_title('TSNE Cluster Plot')
         plt.show()
         
-    #plot_tsne_pca(text, clusters)
+    plot_tsne_pca(text, clusters)
 
     def get_top_keywords(data, clusters, labels, n_terms):
         df = pd.DataFrame(data.todense()).groupby(clusters).mean()

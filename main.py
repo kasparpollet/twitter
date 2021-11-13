@@ -81,7 +81,7 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
     df = db.get_tweets()
-    df = df[df['language'] == 'en']
+    # df = df[df['language'] == 'en']
 
     # db.upload_data(df, 'TestSentimentClusters03', error='replace')
 
