@@ -37,7 +37,7 @@ def print_words(df):
     graph(df[(df.sentiment_pos > 0.2)], len=50, name='Positive Tweats (>0.2)')
     graph(df[(df.sentiment_neg > 0.2)], len=50, name='Negative Tweats (>0.2)')
 
-def do_sentiment(df, threshold=0.3):
+def do_sentiment(df, threshold=0.05):
     from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
     import json
 
@@ -63,7 +63,7 @@ def new_tweets(df):
     df = do_sentiment(df)
 
     # Cluster the tweets
-    df = cluster(df)
+    # df = cluster(df)
     
     # db.upload_data(df, 'finalTweets', error='extend')
 
@@ -77,6 +77,11 @@ def twitter_api(twitter, db):
             try:
                 df = twitter.digital_ocean(geo, country, hashtag)
                 db.upload_data(df, 'DigitalOceanTweets', error='append')
+
+                df = df[df['language'] == 'en']
+                df = new_tweets(df)
+                db.upload_data(df, 'tweets', error='append')
+
                 print('sleeping for 15 minutes...')
                 time.sleep(900)
             except Exception as e:
@@ -87,7 +92,7 @@ def __init__():
     load_dotenv()
     twitter = TwitterApi()
     unhcr = Unhcr()
-    db = DataBase('TestSentimentClusters03')
+    db = DataBase('DigitalOceanTweetsTest')
     return twitter, unhcr, db
 
 
