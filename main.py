@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import numpy as np
 import time
-
+import os
 from scripts.twitter import TwitterApi
 from scripts.database import DataBase
 from scripts.unhcr import Unhcr
@@ -48,7 +48,7 @@ def do_sentiment(df, threshold=0.05):
     df['sentiment_pos'] = df['sentiment'].apply(lambda x: json.loads(x.replace("'",'"'))['pos'])
     df['sentiment_compound'] = df['sentiment'].apply(lambda x: json.loads(x.replace("'",'"'))['compound'])
     df.drop('sentiment', axis=1, inplace=True)
-    df['sentiment'] = ''
+    # df['sentiment'] = ''
     df['label'] = 'neu'
     df.loc[(df.sentiment_compound > threshold), 'label'] = 'pos'
     df.loc[(df.sentiment_compound < -1*threshold), 'label'] = 'neg'
@@ -70,17 +70,24 @@ def new_tweets(df):
     return df
 
 def twitter_api(twitter, db):
-    for geo, country in get_locations_from_file():
-        print('getting:', country)
-        for hashtag in get_hashtags_from_file():
+    for hashtag in get_hashtags_from_file():
+        print('getting:', hashtag)
+        for geo, country in get_locations_from_file():
             print('getting:', country, hashtag)
             try:
                 df = twitter.digital_ocean(geo, country, hashtag)
-                db.upload_data(df, 'DigitalOceanTweets', error='append')
+                db.upload_data(df, 'DigitalOceanTweetsNew', error='append')
 
+                # Clean / filter / sentiment / upload tweets
                 df = df[df['language'] == 'en']
                 df = new_tweets(df)
-                db.upload_data(df, 'tweets', error='append')
+                db.upload_data(df, 'finalTweets', error='append')
+
+                # Drop duplicates
+                final_df = db.get_tweets()
+                final_df.drop_duplicates(subset=["text"],inplace=True)
+                # final_df.reset_index(inplace=True, drop=True)
+                db.upload_data(final_df, 'finalTweets', error='replace')
 
                 print('sleeping for 15 minutes...')
                 time.sleep(900)
@@ -92,18 +99,36 @@ def __init__():
     load_dotenv()
     twitter = TwitterApi()
     unhcr = Unhcr()
-    db = DataBase('DigitalOceanTweetsTest')
+    db = DataBase('finalTweets')
     return twitter, unhcr, db
 
 
 if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
-    # df = db.get_tweets()
+    df = db.get_tweets()
+    # print(df)
+
+    # df = df[df['language'] == 'en']
+    # df.drop_duplicates(subset=["text"],inplace=True)
+    # df = new_tweets(df)
+    print(df)
+    countries = df.geo_location.unique()
+    print(df.geo_location.value_counts())
+
+    for i in countries:
+        # print(i)
+        print(i, round(df[df['geo_location']==i].sentiment_compound.mean(), 2))
+
+    from scripts.countries import calculate_countries_sentiment
+
+    calculate_countries_sentiment(df,db)
+
+    # db = DataBase('tweets')
 
     #df = df[df['language'] == 'en']
     # create_basic_models(df)
-    twitter_api(twitter, db)
+    # twitter_api(twitter, db)
 
     # clean = Clean(df)
     # df = clean.df
@@ -111,5 +136,5 @@ if __name__ == "__main__":
     # df = do_sentiment(df)
     # print(df)
 
-    # db.upload_data(df, 'TestSentimentClusters03', error='replace')
+    # db.upload_data(df, 'tweetsBackup', error='replace')
 
