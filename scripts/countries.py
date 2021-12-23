@@ -32,3 +32,37 @@ def calculate_countries_sentiment(data, db):
 
     new_df['diff'] = round(new_df['pos_per'] - new_df['neg_per'], 2)
     db.upload_data(new_df, name='countrySentiment', error='replace')
+
+def calculate_countries_per_week(df):
+    new_df = pd.DataFrame()
+
+    week = df.created_at.dt.week.tolist()
+    year = df.created_at.dt.year.tolist()
+    week_year = []
+    
+    for i in range(len(year)):
+        week_year.append(f'{week[i]} {year[i]}')
+    df['week'] = week_year
+
+    countries = df.geo_location.unique().tolist()
+    weeks = df.week.unique().tolist()
+    for country in countries:
+        for week in weeks:
+            filtered = df[(df.geo_location == country) & (df.week == week)]
+            if not filtered.empty:
+                new_entry = {}
+                new_entry['country'] = [country]
+                new_entry['week'] = [week]
+                new_entry['sentiment'] = [round(filtered.sentiment_compound.mean(),2)]
+
+                labels = ['pos', 'neg', 'neu']
+                total = len(filtered)
+                for x in labels:
+                    counting = len(filtered[filtered.label == x])
+                    count = round(counting/total*100, 2)
+                    new_entry[x] = [counting]
+                    new_entry[x+'_per'] = [count]
+                new_entry_df = pd.DataFrame.from_dict(new_entry)
+                new_df = pd.concat([new_df, new_entry_df], axis=0)
+    
+    return new_df

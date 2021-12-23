@@ -112,17 +112,20 @@ if __name__ == "__main__":
     # df = df[df['language'] == 'en']
     # df.drop_duplicates(subset=["text"],inplace=True)
     # df = new_tweets(df)
-    print(df)
-    countries = df.geo_location.unique()
-    print(df.geo_location.value_counts())
+    # print(df)
+    # countries = df.geo_location.unique()
+    # print(df.geo_location.value_counts())
 
-    for i in countries:
-        # print(i)
-        print(i, round(df[df['geo_location']==i].sentiment_compound.mean(), 2))
+    # for i in countries:
+    #     # print(i)
+    #     print(i, round(df[df['geo_location']==i].sentiment_compound.mean(), 2))
 
-    from scripts.countries import calculate_countries_sentiment
+    # from scripts.countries import calculate_countries_sentiment
+    from scripts.countries import calculate_countries_per_week
+    country_sentiment_per_week = calculate_countries_per_week(df)
+    db.upload_data(country_sentiment_per_week, name='countrySentimentPerWeek', error='replace')
 
-    calculate_countries_sentiment(df,db)
+    # calculate_countries_sentiment(df,db)
 
     # db = DataBase('tweets')
 
