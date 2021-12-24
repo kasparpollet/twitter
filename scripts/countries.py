@@ -57,11 +57,14 @@ def calculate_countries_per_week(df):
 
                 labels = ['pos', 'neg', 'neu']
                 total = len(filtered)
+                new_entry['total_tweets'] = [total]
                 for x in labels:
                     counting = len(filtered[filtered.label == x])
                     count = round(counting/total*100, 2)
                     new_entry[x] = [counting]
                     new_entry[x+'_per'] = [count]
+
+                new_entry['diff'] = [round(new_entry['pos_per'][0] - new_entry['neg_per'][0], 2)]
                 new_entry_df = pd.DataFrame.from_dict(new_entry)
                 new_df = pd.concat([new_df, new_entry_df], axis=0)
     

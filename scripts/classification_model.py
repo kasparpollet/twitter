@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import time
 import matplotlib.pyplot as plt
+import pickle
 
 from sklearn.model_selection import train_test_split, KFold, GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
@@ -77,7 +78,6 @@ class ClassificationModel:
         y = self.df[self.y]
         y = y.factorize()[0]
         X = self.__create_matrix_df()
-        print(y)
 
         if not self.k_fold:
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size)
@@ -143,30 +143,30 @@ class ClassificationModel:
         return self
 
 
-def create_basic_models(df, pickle=False):
-    model = ClassificationModel(df, model=MultinomialNB(), vec='tfid', plot_auc = False)
-    model.create_model()
-    if pickle:
-        pickle.dump(model.model, open('models/test_model.pickle', 'wb'))
-        pickle.dump(model.vector, open('models/test_vec.pickle', 'wb'))
+def create_basic_models(df, save_pickle=False):
+    # model = ClassificationModel(df, model=MultinomialNB(), vec='tfid', plot_auc = False)
+    # model.create_model()
+    # if save_pickle:
+    #     pickle.dump(model.model, open('models/test_model.pickle', 'wb'))
+    #     pickle.dump(model.vector, open('models/test_vec.pickle', 'wb'))
 
-    model = ClassificationModel(df, model=LogisticRegression(), vec='tfid')
-    model.create_model()
-    if pickle:
-        pickle.dump(model.model, open('models/logistic_regression_model.pickle', 'wb'))
-        pickle.dump(model.vec, open('models/logistic_regression_vec.pickle', 'wb'))
+    # model = ClassificationModel(df, model=LogisticRegression(), vec='tfid')
+    # model.create_model()
+    # if save_pickle:
+    #     pickle.dump(model.model, open('models/logistic_regression_model.pickle', 'wb'))
+    #     pickle.dump(model.vec, open('models/logistic_regression_vec.pickle', 'wb'))
 
-    model = ClassificationModel(df, model=KNeighborsClassifier())
-    model.create_model()
-    if pickle:
-        pickle.dump(model.model, open('models/knn_model.pickle', 'wb'))
-        pickle.dump(model.vec, open('models/knn_vec.pickle', 'wb'))
+    # model = ClassificationModel(df, model=KNeighborsClassifier())
+    # model.create_model()
+    # if save_pickle:
+    #     pickle.dump(model.model, open('models/knn_model.pickle', 'wb'))
+    #     pickle.dump(model.vec, open('models/knn_vec.pickle', 'wb'))
 
     model = ClassificationModel(df, model=RandomForestClassifier(), vec='tfid')
     model.create_model()
-    if pickle:
-        pickle.dump(model.model, open('models/random_forest_model.pickle', 'wb'))
-        pickle.dump(model.vec, open('models/random_forest_vec.pickle', 'wb'))
+    if save_pickle:
+        pickle.dump(model.model, open('files/random_forest_model.pickle', 'wb'))
+        pickle.dump(model.vec, open('files/random_forest_vec.pickle', 'wb'))
 
 def logstic_regression(df):
     model = ClassificationModel(df, model=LogisticRegression(solver='liblinear'), k_fold=5, vec='tfid')
@@ -203,5 +203,11 @@ def random_forest(df):
     model.model.max_features = max_features
 
     forest = model.create_model()
-
     return forest
+
+def final_model(df, save_pickle=False):
+    model = ClassificationModel(df, model=RandomForestClassifier(), vec='count')
+    model.create_model()
+    if save_pickle:
+        pickle.dump(model.model, open('./files/model/random_forest_model.pickle', 'wb'))
+        pickle.dump(model.vec, open('./files/model/random_forest_vec.pickle', 'wb'))

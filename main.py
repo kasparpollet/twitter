@@ -1,13 +1,15 @@
 from dotenv import load_dotenv
 import numpy as np
+import pandas as pd
 import time
 import os
+import pickle
 from scripts.twitter import TwitterApi
 from scripts.database import DataBase
 from scripts.unhcr import Unhcr
 from scripts.clean import Clean
 from scripts.words import graph, display_wordcloud
-from scripts.classification_model import ClassificationModel, create_basic_models
+from scripts.classification_model import ClassificationModel, create_basic_models, final_model
 from scripts.tryout.tr import t
 from scripts.cluster import cluster
 
@@ -54,13 +56,28 @@ def do_sentiment(df, threshold=0.05):
     df.loc[(df.sentiment_compound < -1*threshold), 'label'] = 'neg'
     return df
 
+def do_sentiment_with_random_forest(df):
+    model = pickle.load(open('files/model/random_forest_model.pickle', 'rb'))
+    vec = pickle.load(open('files/model/random_forest_vec.pickle', 'rb'))
+
+    wordcount = vec.transform(df['text'].tolist())
+    tokens = vec.get_feature_names_out()
+    doc_names = ['Doc{:d}'.format(idx) for idx, _ in enumerate(wordcount)]
+    X = pd.DataFrame(data=wordcount.toarray(), index=doc_names, columns=tokens)
+
+    prediction = model.predict(X)
+    df['label'] = prediction
+
+    return df
+
 def new_tweets(df):
     # Clean: rewrite the clean for new languages
     clean = Clean(df)
     df = clean.df
     
     # Do Sentiment on the data
-    df = do_sentiment(df)
+    
+    df = do_sentiment_with_random_forest(df)
 
     # Cluster the tweets
     # df = cluster(df)
@@ -107,37 +124,13 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
     df = db.get_tweets()
-    # print(df)
 
-    # df = df[df['language'] == 'en']
-    # df.drop_duplicates(subset=["text"],inplace=True)
-    # df = new_tweets(df)
-    # print(df)
-    # countries = df.geo_location.unique()
-    # print(df.geo_location.value_counts())
+    twitter_api(twitter, db)
 
-    # for i in countries:
-    #     # print(i)
-    #     print(i, round(df[df['geo_location']==i].sentiment_compound.mean(), 2))
-
-    # from scripts.countries import calculate_countries_sentiment
     from scripts.countries import calculate_countries_per_week
     country_sentiment_per_week = calculate_countries_per_week(df)
     db.upload_data(country_sentiment_per_week, name='countrySentimentPerWeek', error='replace')
 
-    # calculate_countries_sentiment(df,db)
+    final_model(df, save_pickle=True)
 
-    # db = DataBase('tweets')
-
-    #df = df[df['language'] == 'en']
-    # create_basic_models(df)
-    # twitter_api(twitter, db)
-
-    # clean = Clean(df)
-    # df = clean.df
-    
-    # df = do_sentiment(df)
-    # print(df)
-
-    # db.upload_data(df, 'tweetsBackup', error='replace')
 
