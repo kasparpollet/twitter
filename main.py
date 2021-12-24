@@ -132,5 +132,3 @@ if __name__ == "__main__":
     db.upload_data(country_sentiment_per_week, name='countrySentimentPerWeek', error='replace')
 
     final_model(df, save_pickle=True)
-
-
