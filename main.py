@@ -7,7 +7,7 @@ from scripts.database import DataBase
 from scripts.unhcr import Unhcr
 from scripts.clean import Clean
 from scripts.words import graph, display_wordcloud
-from scripts.classification_model import ClassificationModel, create_basic_models
+from scripts.classification_model import ClassificationModel, create_basic_models, final_model
 from scripts.tryout.tr import t
 from scripts.cluster import cluster
 
@@ -107,37 +107,13 @@ if __name__ == "__main__":
     # RUN CODE HERE
     twitter, unhcr, db = __init__()
     df = db.get_tweets()
-    # print(df)
 
-    # df = df[df['language'] == 'en']
-    # df.drop_duplicates(subset=["text"],inplace=True)
-    # df = new_tweets(df)
-    # print(df)
-    # countries = df.geo_location.unique()
-    # print(df.geo_location.value_counts())
+    twitter_api(twitter, db)
 
-    # for i in countries:
-    #     # print(i)
-    #     print(i, round(df[df['geo_location']==i].sentiment_compound.mean(), 2))
-
-    # from scripts.countries import calculate_countries_sentiment
     from scripts.countries import calculate_countries_per_week
     country_sentiment_per_week = calculate_countries_per_week(df)
     db.upload_data(country_sentiment_per_week, name='countrySentimentPerWeek', error='replace')
 
-    # calculate_countries_sentiment(df,db)
+    final_model(df)
 
-    # db = DataBase('tweets')
-
-    #df = df[df['language'] == 'en']
-    # create_basic_models(df)
-    # twitter_api(twitter, db)
-
-    # clean = Clean(df)
-    # df = clean.df
-    
-    # df = do_sentiment(df)
-    # print(df)
-
-    # db.upload_data(df, 'tweetsBackup', error='replace')
 
