@@ -12,6 +12,7 @@ from scripts.words import graph, display_wordcloud
 from scripts.classification_model import ClassificationModel, create_basic_models, final_model
 from scripts.tryout.tr import t
 from scripts.cluster import cluster
+from scripts.countries import calculate_countries_sentiment, calculate_countries_per_week
 
 
 def get_hashtags_from_file():
@@ -77,12 +78,10 @@ def new_tweets(df):
     
     # Do Sentiment on the data
     
-    df = do_sentiment_with_random_forest(df)
+    df = do_sentiment(df)
+    # df = do_sentiment_with_random_forest(df)
 
-    # Cluster the tweets
-    # df = cluster(df)
-    
-    # db.upload_data(df, 'finalTweets', error='extend')
+    df = add_week(df)
 
     return df
 
@@ -98,13 +97,12 @@ def twitter_api(twitter, db):
                 # Clean / filter / sentiment / upload tweets
                 df = df[df['language'] == 'en']
                 df = new_tweets(df)
-                db.upload_data(df, 'finalTweets', error='append')
+                db.upload_data(df, 'finalTweets2', error='append')
 
                 # Drop duplicates
                 final_df = db.get_tweets()
                 final_df.drop_duplicates(subset=["text"],inplace=True)
-                # final_df.reset_index(inplace=True, drop=True)
-                db.upload_data(final_df, 'finalTweets', error='replace')
+                db.upload_data(final_df, 'finalTweets2', error='replace')
 
                 print('sleeping for 15 minutes...')
                 time.sleep(900)
@@ -112,11 +110,22 @@ def twitter_api(twitter, db):
                 print(e)
                 print('something went wrong')
 
+
+def add_week(df):
+    week = df.created_at.dt.week.tolist()
+    year = df.created_at.dt.year.tolist()
+    week_year = []
+    
+    for i in range(len(year)):
+        week_year.append(f'{week[i]} {year[i]}')
+    df['week'] = week_year
+    return df
+
 def __init__():
     load_dotenv()
     twitter = TwitterApi()
     unhcr = Unhcr()
-    db = DataBase('finalTweets')
+    db = DataBase('test')
     return twitter, unhcr, db
 
 

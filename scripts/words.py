@@ -12,14 +12,14 @@ import matplotlib.pyplot as plt
 from collections import Counter
 
 
-def display_wordcloud(self):
+def display_wordcloud(df):
     from main import get_hashtags_from_file
 
     Mask = np.array(Image.open(requests.get('http://clipart-library.com/image_gallery2/Twitter-PNG-Image.png', stream=True).raw))
     image_colors = ImageColorGenerator(Mask)
 
     # Create and generate a word cloud image 
-    my_cloud = WordCloud(background_color='black', mask=Mask).generate(' '.join(self.df['text']))
+    my_cloud = WordCloud(background_color='black', mask=Mask).generate(' '.join(df['text']))
 
     # Display the generated wordcloud image
     plt.imshow(my_cloud.recolor(color_func=image_colors), interpolation='bilinear') 

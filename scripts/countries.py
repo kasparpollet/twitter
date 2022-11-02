@@ -41,6 +41,8 @@ def calculate_countries_per_week(df):
     week_year = []
     
     for i in range(len(year)):
+        if week[i] == 52 and year[i] == 2022:
+            year[i] = 2021
         week_year.append(f'{week[i]} {year[i]}')
     df['week'] = week_year
 
